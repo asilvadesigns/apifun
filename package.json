@@ -1,0 +1,21 @@
+{
+  "name": "capitalone",
+  "version": "1.0.0",
+  "description": "This is a private repository.",
+  "main": "index.js",
+  "scripts": {
+    "hello": "echo \"Hello world!\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asilvadesigns/capitalone.git"
+  },
+  "keywords": [],
+  "author": "Alberto Silva <asilvadesigns@gmail.com> (https://github.com/asilvadesigns)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/asilvadesigns/capitalone/issues"
+  },
+  "homepage": "https://github.com/asilvadesigns/capitalone#readme"
+}
