@@ -20,5 +20,8 @@
   "homepage": "https://github.com/asilvadesigns/capitalone#readme",
   "dependencies": {
     "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "eslint-config-google": "^0.9.1"
   }
 }
