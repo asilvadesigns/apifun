@@ -25,7 +25,7 @@ app.post('/measurements', (req, res) => {
   }
 
   DATA.measurements.push(req.body);
-  fs.writeFile('./measurements.json', JSON.stringify(DATA, null, 2), err => {
+  fs.writeFile('./measurements.json', JSON.stringify(DATA, null, 2), (err) => {
     if (err) console.log(err);
   });
 
@@ -34,6 +34,6 @@ app.post('/measurements', (req, res) => {
   res.status(201).end();
 });
 
-app.listen(3000, _ => {
-  console.log('Server listenting on port ' + 3000 + ' ...');
+app.listen(CONFIG.PORT, _ => {
+  console.log('Server listenting on port ' + CONFIG.PORT + ' ...');
 });
