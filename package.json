@@ -21,7 +21,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "eslint-config-google": "^0.9.1"
