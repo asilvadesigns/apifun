@@ -1,9 +1,14 @@
 ## TODO
 ##### Wed Oct 18 23:26:11 2017
 - [_] error handling for invalid types
-- [_] json schema.. 
-- [_] handle collisions... can't most same timestamp
-- [_] dynamic timestamp maybe..?
+- [_] do you even json schema bro 
+- [_] handle collisions... can't post same timestamp
+- [_] generate dynamic timestamp on post request maybe..?
 - [_] project architecture.. it's ugly dude
 - [_] automate testing or at least get some asserts
-- [_] implement get method for given timestamp
+- [x] implement get method for given timestamp
+
+##### Thu Oct 19 15:06:22 2017
+- [_] handle posting single vs multiple items
+- [_] research best practices for multiple posts single request
+- [_] implement get method for given data

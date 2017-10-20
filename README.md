@@ -2,6 +2,7 @@
 This is a private repository.
 
 
+### Dev
 ##### Environment
 ```
 OS X    10.11.6
@@ -14,7 +15,8 @@ npm     3.10.10
 2. `npm install` to download dependencies. 
 
 
-##### Helpful
+### Reference
+##### Documentation
 - [Node.js ES2015 Support][1]
 - [Node.js ES2015 and beyond][2]
 - [Node.js v6.11.4 Documentation][3]
@@ -24,3 +26,10 @@ npm     3.10.10
 [2]: https://nodejs.org/en/docs/es6/
 [3]: https://nodejs.org/dist/latest-v6.x/docs/api/
 [4]: https://expressjs.com/en/4x/api.html
+
+##### HTTP status codes
+- 200 – ok: request was successful
+- 201 - created: a new resource was successfully created
+- 400 - bad request: the request was malformed or invalid
+- 404 - not found: request resource could not be found
+- 500 - internal server error: unknown server error has occurred
