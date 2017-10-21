@@ -1,11 +1,11 @@
 const CONFIG = require("./config");
-const DATA   = require("./measurements.json");
+const DATA = require("./measurements.json");
 
 const fs = require("fs");
-const _  = require("lodash");
+const _ = require("lodash");
 
-const express    = require("express");
-const app        = express();
+const express = require("express");
+const app = express();
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -52,6 +52,23 @@ app.post("/measurements", (req, res) => {
   res.type("application/json");
   res.location(req.url + req.body.timestamp);
   res.status(201).end();
+});
+
+//  PUT measurements by timestamp
+app.put("/measurements/:timestamp", (req, res) => {
+  let UPDATE = DATA.measurements.map(measurement => {
+    var DATA_ID = measurement.timestamp;
+    var REQUEST = req.params.timestamp;
+    return DATA_ID === REQUEST ? req.body : measurement;
+  });
+
+  DATA.measurements = UPDATE;
+  fs.writeFile("./measurements.json", JSON.stringify(DATA, null, 2), err => {
+    if (err) console.log(err);
+  });
+
+  res.type("application/json");
+  res.status(200).end();
 });
 
 app.listen(CONFIG.PORT, _ => {
