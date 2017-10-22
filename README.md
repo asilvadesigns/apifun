@@ -30,6 +30,7 @@ npm     3.10.10
 ##### HTTP status codes
 - 200 – ok: request was successful
 - 201 - created: a new resource was successfully created
+- 204 - server successfully processed request, but is not returning any content
 - 400 - bad request: the request was malformed or invalid
 - 404 - not found: request resource could not be found
 - 500 - internal server error: unknown server error has occurred

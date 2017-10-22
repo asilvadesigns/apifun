@@ -1,5 +1,5 @@
 const CONFIG = require("./config");
-const DATA = require("./measurements.json");
+const DATA = require("./data/measurements.json");
 
 const fs = require("fs");
 const _ = require("lodash");
@@ -68,7 +68,7 @@ app.put("/measurements/:timestamp", (req, res) => {
   });
 
   res.type("application/json");
-  res.status(200).end();
+  res.status(204).end();
 });
 
 app.listen(CONFIG.PORT, _ => {
