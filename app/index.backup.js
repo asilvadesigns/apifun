@@ -40,12 +40,9 @@ app.get("/measurements/:timestamp", (req, res) => {
 
 //  POST measurements
 app.post("/measurements", (req, res) => {
-  if (!req.body.timestamp) {
-    return res.status(400).end();
-  }
-
   DATA.measurements.push(req.body);
-  fs.writeFile("./measurements.json", JSON.stringify(DATA, null, 2), err => {
+
+  fs.writeFile("./data/measurements.json", JSON.stringify(DATA, null, 2), err => {
     if (err) console.log(err);
   });
 
@@ -63,13 +60,46 @@ app.put("/measurements/:timestamp", (req, res) => {
   });
 
   DATA.measurements = UPDATE;
-  fs.writeFile("./measurements.json", JSON.stringify(DATA, null, 2), err => {
+  fs.writeFile("./data/measurements.json", JSON.stringify(DATA, null, 2), err => {
     if (err) console.log(err);
   });
 
-  res.type("application/json");
   res.status(204).end();
 });
+
+//  DELETE measurement by timestamp
+app.delete("/measurements/:timestamp", (req, res) => {
+  let UPDATE = DATA.measurements.filter(measurement => {
+    var DATA_ID = measurement.timestamp;
+    var REQUEST = req.params.timestamp;
+    if (DATA_ID !== REQUEST) {
+      return measurement;
+    }
+  });
+
+  DATA.measurements = UPDATE;
+  fs.writeFile("./data/measurements.json", JSON.stringify(DATA, null, 2), err => {
+    if (err) console.log(err);
+  });
+
+  res.status(204).end();
+});
+
+////  PATCH measurements by timestamp
+//app.patch("/measurements/:timestamp", (req, res) => {
+//  DATA.measurements.forEach(measurement => {
+//    var DATA_ID = measurement.timestamp;
+//    var REQUEST = req.params.timestamp;
+//    if (DATA_ID === REQUEST) {
+//      // console.log('update this one:', measurement);
+//      // console.log('  with this one:', req.body);
+//      console.log(Object.keys(req.body));
+//    }
+//  });
+//
+//  res.type("application/json");
+//  res.status(204).end();
+//});
 
 app.listen(CONFIG.PORT, _ => {
   console.log("Server listenting on port " + CONFIG.PORT + " ...");

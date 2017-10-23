@@ -10,5 +10,9 @@
 
 ##### Thu Oct 19 15:06:22 2017
 - [_] handle posting single vs multiple items
-- [_] research best practices for multiple posts single request
-- [_] implement get method for given data
+- [x] research best practices for multiple posts single request
+- [x] implement get method for given data
+
+##### Mon Oct 23 09:05:21 2017
+- [x] refactor / startover
+- [x] change app structure
