@@ -16,3 +16,4 @@
 ##### Mon Oct 23 09:05:21 2017
 - [x] refactor / startover
 - [x] change app structure
+- [x] setup validation && schema

@@ -1,4 +1,9 @@
+const AJV = require("ajv");
+const ajv = new AJV({ allErrors: true });
+
 const measurements = require("express").Router();
+
+const schema = require("../models/measurements.js");
 
 measurements.get('/', (req, res) => {
   res.status(200).json({ message: 'no measurements yet!' });
@@ -6,23 +11,17 @@ measurements.get('/', (req, res) => {
 
 measurements.post('/', (req, res) => {
 
-  if (typeof(req.body.timestamp) !== "string") {
+  let valid = ajv.validate(schema, req.body);
+  if (!valid) {
     return res.status(400).json({
-      message: 'timestamp must be a string',
-      posting: req.body.timestamp
-    });
-  }
-
-  if (typeof(req.body.temperature) !== "number") {
-    return res.status(400).json({
-      message: 'temperature must be a number',
-      posting: req.body.temperature
+      heading: 'invalid input...',
+      message: ajv.errors
     });
   }
 
   res.status(201).json({
-    message: 'attempting to post here...',
-    posting: req.body
+    heading: 'successfully posting...',
+    message: req.body
   });
 });
 
