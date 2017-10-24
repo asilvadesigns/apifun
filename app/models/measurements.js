@@ -3,7 +3,7 @@ const ajv = new AJV({ allErrors: true });
 
 const schema = {
   "properties": {
-    "timestamp": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" },
     "temperature": { "type": "number" },
     "dewpoint": { "type": "number" },
     "percipitation": { "type": "number" }
