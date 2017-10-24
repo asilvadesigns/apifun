@@ -1,5 +1,5 @@
 const CONFIG = require("./config");
-const ROUTES = require("./routes");
+const ROUTES = require("./controllers");
 
 const app = require("express")();
 const bodyParser = require("body-parser");

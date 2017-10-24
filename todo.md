@@ -17,3 +17,7 @@
 - [x] refactor / startover
 - [x] change app structure
 - [x] setup validation && schema
+
+##### Tue Oct 24 16:56:12 2017
+- [_] handle "get measurements from date"
+- [_] automate testing...
