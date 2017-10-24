@@ -19,5 +19,6 @@
 - [x] setup validation && schema
 
 ##### Tue Oct 24 16:56:12 2017
-- [_] handle "get measurements from date"
+- [x] handle "get measurements from date"
+- [_] throw error if date is not valid
 - [_] automate testing...

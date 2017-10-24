@@ -1,5 +1,7 @@
 const measurements = require("express").Router();
 
+const moment = require("moment");
+
 const model = require("../models/measurements.js");
 const store = require("../store");
 
@@ -16,7 +18,8 @@ measurements.get("/", (req, res) => {
 
 measurements.get("/:timestamp", (req, res) => {
   let query = store.measurements.filter((measurement) => {
-    if (measurement.timestamp === req.params.timestamp) {
+    var date = moment(req.params.timestamp, 'YYYY-MM-DD', true);
+    if (date.isValid() || measurement.timestamp === req.params.timestamp) {
       return measurement;
     }
   });
