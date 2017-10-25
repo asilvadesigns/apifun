@@ -64,8 +64,20 @@ measurements.post("/", (req, res) => {
     });
   }
 
-  //  TODO: WTF, check if the req.body.timestamp exists!!!
-  store.measurements.push(req.body);
+  let reqexists = false;
+  store.measurements.forEach((measurement) => {
+    if (measurement.timestamp === req.body.timestamp) reqexists = true;
+  });
+
+  if (!reqexists) {
+    store.measurements.push(req.body);
+  } else {
+    return res.status(400).json({
+      heading: "timestamp already exists...",
+      message: req.body
+    });
+  }
+
   res.location("/measurements/" + req.body.timestamp);
   res.status(201).json({
     heading: "successfully posted...",
