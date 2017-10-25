@@ -25,3 +25,4 @@
 - [_] cleanup "store" dir
 - [x] handle posting multiple time stamps
 - [_] add store utilities, like checking if something exists..
+- [_] store will need to add, remove, update, check entries

@@ -119,6 +119,7 @@ measurements.put("/:timestamp", (req, res) => {
     if (measurement.timestamp === request) reqexists = true;
   });
 
+  //  TODO: actually update the store, this just works in theory
   if (reqexists) {
     update = store.measurements.map((measurement) => {
       if (measurement.timestamp === request) return req.body;
