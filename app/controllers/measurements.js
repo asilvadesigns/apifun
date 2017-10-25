@@ -139,4 +139,58 @@ measurements.put("/:timestamp", (req, res) => {
   });
 });
 
+measurements.patch("/:timestamp", (req, res) => {
+
+  const request = req.params.timestamp;
+  let update    = [];
+
+  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  if (!datetime.isValid()) {
+    return res.status(400).json({
+      heading: "invalid timestamp...",
+      message: request
+    });
+  }
+
+  let reqbody = model.isValid(req.body);
+  if (!reqbody.valid) {
+    return res.status(400).json({
+      heading: "invalid body schema...",
+      message: reqbody.errors
+    });
+  }
+
+  if (request !== req.body.timestamp) {
+    return res.status(409).json({
+      heading: "timestamp conflict in request...",
+      message: request
+    });
+  }
+
+  let reqexists = false;
+  store.measurements.forEach((measurement) => {
+    if (measurement.timestamp === request) reqexists = true;
+  });
+
+  if (reqexists) {
+    update = store.measurements.map((measurement) => {
+      return (measurement.timestamp === request) ? req.body : measurement;
+    });
+  } else {
+    return res.status(404).json({
+      heading: "timestamp not found...",
+      message: request
+    });
+  }
+
+  store.measurements = update;
+
+  //  TODO: use this - res.status(204).json({
+  res.status(200).json({
+    heading: "successfully updated...",
+    message: store.measurements
+  });
+
+});
+
 module.exports = measurements;
