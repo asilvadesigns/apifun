@@ -24,3 +24,4 @@
 - [_] automate testing...
 - [_] cleanup "store" dir
 - [x] handle posting multiple time stamps
+- [_] add store utilities, like checking if something exists..
