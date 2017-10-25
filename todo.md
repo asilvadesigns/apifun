@@ -22,3 +22,5 @@
 - [x] handle "get measurements from date"
 - [x] throw error if date is not valid
 - [_] automate testing...
+- [_] cleanup "store" dir
+- [_] handle posting multiple time stamps

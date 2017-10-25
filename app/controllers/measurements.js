@@ -20,10 +20,10 @@ measurements.get("/", (req, res) => {
 
 measurements.get("/:timestamp", (req, res) => {
 
-  let date     = moment(req.params.timestamp, 'YYYY-MM-DD', true);
-  let datetime = moment(req.params.timestamp, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  let request  = req.params.timestamp;
-  let query;
+  const date     = moment(req.params.timestamp, 'YYYY-MM-DD', true);
+  const datetime = moment(req.params.timestamp, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  const request  = req.params.timestamp;
+  let query      = [];
 
   if (datetime.isValid()) {
     query = store.measurements.filter((measurement) => {
@@ -35,7 +35,7 @@ measurements.get("/:timestamp", (req, res) => {
     });
   } else {
     return res.status(400).json({
-      heading: "bad request...",
+      heading: "invalid date or datetime request...",
       message: request
     });
   }
@@ -59,11 +59,12 @@ measurements.post("/", (req, res) => {
   let valid = model.isValid(req.body);
   if (!valid.valid) {
     return res.status(400).json({
-      heading: "invalid input...",
+      heading: "invalid body schema...",
       message: valid.errors
     });
   }
 
+  //  TODO: WTF, check if the req.body.timestamp exists!!!
   store.measurements.push(req.body);
   res.location("/measurements/" + req.body.timestamp);
   res.status(201).json({
@@ -71,6 +72,56 @@ measurements.post("/", (req, res) => {
     message: req.body
   });
 
+});
+
+measurements.put("/:timestamp", (req, res) => {
+
+  const request = req.params.timestamp;
+  let update    = [];
+
+  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  if (!datetime.isValid()) {
+    return res.status(400).json({
+      heading: "invalid timestamp...",
+      message: request
+    });
+  }
+
+  let reqbody = model.isValid(req.body);
+  if (!reqbody.valid) {
+    return res.status(400).json({
+      heading: "invalid body schema...",
+      message: reqbody.errors
+    });
+  }
+
+  if (request !== req.body.timestamp) {
+    return res.status(409).json({
+      heading: "timestamp conflict in request...",
+      message: request
+    });
+  }
+
+  update = store.measurements.map((measurement) => {
+    if (measurement.timestamp === request) {
+      return req.body;
+    } else {
+      return measurement;
+    }
+  });
+
+  if (!update || update.length === 0) {
+    return res.status(404).json({
+      heading: "timestamp not found...",
+      message: request
+    });
+  }
+
+  //  TODO: use this - res.status(204).json({
+  res.status(200).json({
+    heading: "successfully updated...",
+    message: update
+  });
 });
 
 module.exports = measurements;
