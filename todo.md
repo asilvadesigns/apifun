@@ -23,4 +23,4 @@
 - [x] throw error if date is not valid
 - [_] automate testing...
 - [_] cleanup "store" dir
-- [_] handle posting multiple time stamps
+- [x] handle posting multiple time stamps

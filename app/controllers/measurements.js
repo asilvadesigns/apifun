@@ -102,15 +102,16 @@ measurements.put("/:timestamp", (req, res) => {
     });
   }
 
-  update = store.measurements.map((measurement) => {
-    if (measurement.timestamp === request) {
-      return req.body;
-    } else {
-      return measurement;
-    }
+  let reqexists = false;
+  store.measurements.forEach((measurement) => {
+    if (measurement.timestamp === request) reqexists = true;
   });
 
-  if (!update || update.length === 0) {
+  if (reqexists) {
+    update = store.measurements.map((measurement) => {
+      if (measurement.timestamp === request) return req.body;
+    });
+  } else {
     return res.status(404).json({
       heading: "timestamp not found...",
       message: request
