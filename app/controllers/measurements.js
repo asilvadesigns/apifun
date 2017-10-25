@@ -119,10 +119,13 @@ measurements.put("/:timestamp", (req, res) => {
     if (measurement.timestamp === request) reqexists = true;
   });
 
-  //  TODO: actually update the store, this just works in theory
   if (reqexists) {
     update = store.measurements.map((measurement) => {
-      if (measurement.timestamp === request) return req.body;
+      if (measurement.timestamp === request) {
+        return req.body
+      } else {
+        return measurement
+      };
     });
   } else {
     return res.status(404).json({
@@ -131,10 +134,12 @@ measurements.put("/:timestamp", (req, res) => {
     });
   }
 
+  store.measurements = update;
+
   //  TODO: use this - res.status(204).json({
   res.status(200).json({
     heading: "successfully updated...",
-    message: update
+    message: store.measurements
   });
 });
 
