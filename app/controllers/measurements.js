@@ -1,5 +1,5 @@
 const measurements = require("express").Router();
-
+const jsonpatch = require("fast-json-patch");
 const moment = require("moment");
 
 const model = require("../models/measurements.js");
@@ -160,26 +160,45 @@ measurements.patch("/:timestamp", (req, res) => {
     });
   }
 
-  if (request !== req.body.timestamp) {
-    return res.status(409).json({
-      heading: "timestamp conflict in request...",
-      message: request
-    });
-  }
+  //TODO: assuming we use json patch, this should never happen.
+  //if (request !== req.body.timestamp) {
+  //  return res.status(409).json({
+  //    heading: "timestamp conflict in request...",
+  //    message: request
+  //  });
+  //}
 
   let reqexists = false;
   store.measurements.forEach((measurement) => {
     if (measurement.timestamp === request) reqexists = true;
   });
 
+  let updateschemaerrors;
   if (reqexists) {
     update = store.measurements.map((measurement) => {
-      return (measurement.timestamp === request) ? req.body : measurement;
+      if (measurement.timestamp === request) {
+        let updateditem = jsonpatch.applyPatch(measurement, req.body, true).newDocument;
+        let schemacheck = model.isValid(updateditem);
+        if (!schemacheck.valid) {
+          updateschemaerrors = schemacheck.errors
+        } else {
+          return updateditem;
+        }
+      } else {
+        return measurement;
+      }
     });
   } else {
     return res.status(404).json({
       heading: "timestamp not found...",
       message: request
+    });
+  }
+
+  if (updateschemaerrors) {
+    return res.status(400).json({
+      heading: "invalid body schema...",
+      message: updateschemaerrors
     });
   }
 

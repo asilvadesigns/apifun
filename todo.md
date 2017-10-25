@@ -26,3 +26,7 @@
 - [x] handle posting multiple time stamps
 - [_] add store utilities, like checking if something exists..
 - [_] store will need to add, remove, update, check entries
+
+##### Wed Oct 25 08:18:55 2017
+- [x] use official json patch
+- [_] when putting, tell me if it's the same, would be nice
