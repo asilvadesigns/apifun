@@ -6,6 +6,7 @@ const model = require("../models/measurements.js");
 const store = require("../store");
 
 measurements.get("/", (req, res) => {
+
   if (store.measurements.length === 0) {
     return res.status(404).json({
       heading: "no measurements...",
@@ -14,6 +15,7 @@ measurements.get("/", (req, res) => {
   }
 
   res.status(200).json(store.measurements);
+
 });
 
 measurements.get("/:timestamp", (req, res) => {
@@ -43,44 +45,17 @@ measurements.get("/:timestamp", (req, res) => {
       heading: "timestamp not found...",
       message: request
     });
-  } else {
-    return res.status(200).json({
-      heading: "measurement found!",
-      message: query
-    });
-  }
-});
-
-measurements.get("/:date", (req, res) => {
-
-  let date = moment(req.params.date, 'YYYY-MM-DD', true);
-  if (!date.isValid()) {
-    return res.status(404).json({
-      heading: "date is not valid...",
-      message: req.params.date
-    });
-  }
-
-  let query = store.measurements.filter((measurement) => {
-    if (measurement.timestamp.includes(date)) {
-      return measurement;
-    }
-  });
-
-  if (!query || query.length === 0) {
-    return res.status(404).json({
-      heading: "timestamp not found...",
-      message: req.params.date
-    });
   }
 
   res.status(200).json({
     heading: "measurement found!",
     message: query
   });
+
 });
 
 measurements.post("/", (req, res) => {
+
   let valid = model.isValid(req.body);
   if (!valid.valid) {
     return res.status(400).json({
@@ -95,6 +70,7 @@ measurements.post("/", (req, res) => {
     heading: "successfully posted...",
     message: req.body
   });
+
 });
 
 module.exports = measurements;

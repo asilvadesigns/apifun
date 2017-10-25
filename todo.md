@@ -20,5 +20,5 @@
 
 ##### Tue Oct 24 16:56:12 2017
 - [x] handle "get measurements from date"
-- [_] throw error if date is not valid
+- [x] throw error if date is not valid
 - [_] automate testing...
