@@ -121,11 +121,7 @@ measurements.put("/:timestamp", (req, res) => {
 
   if (reqexists) {
     update = store.measurements.map((measurement) => {
-      if (measurement.timestamp === request) {
-        return req.body
-      } else {
-        return measurement
-      };
+      return (measurement.timestamp === request) ? req.body : measurement;
     });
   } else {
     return res.status(404).json({
