@@ -212,4 +212,42 @@ measurements.patch("/:timestamp", (req, res) => {
 
 });
 
+measurements.delete("/:timestamp", (req, res) => {
+
+  const request = req.params.timestamp;
+  let update    = [];
+
+  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  if (!datetime.isValid()) {
+    return res.status(400).json({
+      heading: "invalid timestamp...",
+      message: request
+    });
+  }
+
+  let reqexists = false;
+  store.measurements.forEach((measurement) => {
+    if (measurement.timestamp === request) reqexists = true;
+  });
+
+  if (reqexists) {
+    update = store.measurements.filter((measurement) => {
+      if (measurement.timestamp !== request) return measurement;
+    });
+  } else {
+    return res.status(404).json({
+      heading: "timestamp not found...",
+      message: request
+    });
+  }
+
+  store.measurements = update;
+
+  //  TODO: use this - res.status(204).json({
+  res.status(200).json({
+    heading: "successfully deleted...",
+    message: store.measurements
+  });
+});
+
 module.exports = measurements;
