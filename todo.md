@@ -35,4 +35,5 @@
 - [_] time complexity in stats sucks
 - [_] refactor code... acting like hoisting isn't a thing..
 - [x] handle datetime validation in stats
-- [_] handle valid or invalid stats and metrics
+- [x] handle metric validation
+- [_] handle stat validation..

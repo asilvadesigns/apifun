@@ -8,7 +8,6 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const param  = req.query.param;
   const stat   = req.query.stat;
   const metric = req.query.metric;
   const from   = req.query.fromDateTime;
@@ -30,6 +29,25 @@ stats.get("/", (req, res) => {
       message: to
     });
   }
+
+  if (Array.isArray(metric)) {
+    metric.forEach((item) => {
+      if (!model.schema.properties.hasOwnProperty(item)) {
+        return res.status(400).json({
+          heading: "00 - invalid metric...",
+          message: metric
+        });
+      }
+    });
+  } else {
+    if (!model.schema.properties.hasOwnProperty(metric)) {
+      return res.status(400).json({
+        heading: "01 - invalid metric...",
+        message: metric
+      });
+    }
+  }
+  
 
   if (Array.isArray(metric)) {
     metric.forEach((item) => {

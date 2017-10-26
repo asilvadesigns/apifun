@@ -5,7 +5,7 @@ const schema = {
   "properties": {
     "timestamp": { "type": "string", "format": "date-time" },
     "temperature": { "type": "number" },
-    "dewpoint": { "type": "number" },
+    "dewPoint": { "type": "number" },
     "percipitation": { "type": "number" }
   },
   "required": ["timestamp"]
@@ -18,4 +18,5 @@ const isValid = (data) => {
   }
 }
 
+module.exports.schema  = schema;
 module.exports.isValid = isValid;
