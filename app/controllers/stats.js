@@ -32,21 +32,40 @@ stats.get("/", (req, res) => {
 
   let alpha = _.findIndex(dbquery, { "timestamp": from });
   let omega = _.findIndex(dbquery, { "timestamp": to });
+  dbquery   = _.slice(dbquery, alpha, omega);
 
-  dbquery = _.slice(dbquery, alpha, omega);
-  let min = _.minBy(dbquery, metric);
-  let max = _.maxBy(dbquery, metric);
-  let avg = _.meanBy(dbquery, metric);
-      avg = Math.floor(avg * 10) / 10;
+  let min     = _.minBy(dbquery, metric);
+  let max     = _.maxBy(dbquery, metric);
+  let average = _.meanBy(dbquery, metric);
+
+  min     = min[metric]
+  max     = max[metric]
+  average = Math.round(average * 10) / 10;
+
+  statistics = [
+    {
+      metric: metric,
+      stat: "min",
+      value: min
+    },
+    {
+      metric: metric,
+      stat: "max",
+      value: max
+    },
+    {
+      metric: metric,
+      stat: "average",
+      value: average
+    },
+  ]
 
   res.status(200).json({
     heading: "querystring test...",
     message: {
       querystring: req.query,
       queryresult: dbquery,
-      minimum: min,
-      maximum: max,
-      average: avg
+      statistics: statistics
     }
   })
 });
