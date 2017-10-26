@@ -30,3 +30,9 @@
 ##### Wed Oct 25 08:18:55 2017
 - [x] use official json patch
 - [_] when putting, tell me if it's the same, would be nice
+
+##### Thu Oct 26 00:13:31 2017
+- [_] time complexity in stats sucks
+- [_] refactor code... acting like hoisting isn't a thing..
+- [x] handle datetime validation in stats
+- [_] handle valid or invalid stats and metrics

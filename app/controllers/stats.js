@@ -15,6 +15,22 @@ stats.get("/", (req, res) => {
   const to     = req.query.toDateTime;
   let dbquery  = [];
 
+  let checkfrom = moment(from, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  if (!checkfrom.isValid()) {
+    return res.status(400).json({
+      heading: "invalid fromDateTime format...",
+      message: from
+    });
+  }
+
+  let checkto = moment(to, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  if (!checkto.isValid()) {
+    return res.status(400).json({
+      heading: "invalid toDateTime format...",
+      message: to
+    });
+  }
+
   if (Array.isArray(metric)) {
     metric.forEach((item) => {
       dbquery = store.measurements.filter((measurement) => {
