@@ -7,16 +7,24 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  let param  = req.query.param;
-  let stat   = req.query.stat;
-  let metric = req.query.metric;
-  let from   = req.query.fromDateTime;
-  let to     = req.query.toDateTime;
-
+  const param  = req.query.param;
+  const stat   = req.query.stat;
+  const metric = req.query.metric;
+  const from   = req.query.fromDateTime;
+  const to     = req.query.toDateTime;
   let dbquery;
-  dbquery = store.measurements.filter((measurement) => {
-    if (measurement.hasOwnProperty(metric)) return measurement;
-  });
+
+  if (Array.isArray(metric)) {
+    metric.forEach((item) => {
+      dbquery = store.measurements.filter((measurement) => {
+        if (measurement.hasOwnProperty(item)) return measurement;
+      });
+    });
+  } else {
+    dbquery = store.measurements.filter((measurement) => {
+      if (measurement.hasOwnProperty(metric)) return measurement;
+    });
+  }
 
   res.status(200).json({
     heading: "querystring test...",
