@@ -30,24 +30,10 @@ stats.get("/", (req, res) => {
     });
   }
 
-  if (Array.isArray(metric)) {
-    metric.forEach((item) => {
-      if (!model.schema.properties.hasOwnProperty(item)) {
-        return res.status(400).json({
-          heading: "00 - invalid metric...",
-          message: metric
-        });
-      }
-    });
-  } else {
-    if (!model.schema.properties.hasOwnProperty(metric)) {
-      return res.status(400).json({
-        heading: "01 - invalid metric...",
-        message: metric
-      });
-    }
-  }
-  
+  dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');
+  let alpha = _.findIndex(dbquery, { "timestamp": from });
+  let omega = _.findIndex(dbquery, { "timestamp": to });
+  dbquery   = _.slice(dbquery, alpha, omega);
 
   if (Array.isArray(metric)) {
     metric.forEach((item) => {
@@ -61,12 +47,12 @@ stats.get("/", (req, res) => {
     });
   }
 
-  //  this should always be sorted...
-  //dbquery = _.sortBy(dbquery, "timestamp");
-
-  let alpha = _.findIndex(dbquery, { "timestamp": from });
-  let omega = _.findIndex(dbquery, { "timestamp": to });
-  dbquery   = _.slice(dbquery, alpha, omega);
+  if (!dbquery || dbquery.length === 0) {
+    return res.status(400).json({
+      heading: "invalid metric...",
+      message: metric
+    })
+  }
 
   let min     = _.minBy(dbquery, metric);
   let max     = _.maxBy(dbquery, metric);

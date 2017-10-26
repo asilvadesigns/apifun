@@ -37,5 +37,5 @@
 - [x] handle datetime validation in stats
 - [x] handle metric validation
 - [_] handle stat validation..
-- [_] assume measurements are sorted..? should be...
-- [_] change logic stats logic: start with date range, filter out metrics, generate stats
+- [x] assume measurements are sorted..? should be...
+- [x] change logic stats logic: start with date range, filter out metrics, generate stats
