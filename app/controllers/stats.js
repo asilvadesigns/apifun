@@ -8,11 +8,25 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const from      = req.query.fromDateTime;
-  const to        = req.query.toDateTime;
   const stat      = req.query.stat;
   let metrics     = req.query.metric;
+  const from      = req.query.fromDateTime;
+  const to        = req.query.toDateTime;
   let dbquery     = [];
+
+  if (!stat || stat.length === 0 ) {
+    return res.status(400).json({
+      heading: "stat parameter missing from querystring...",
+      message: "?stat=<yourstathere>"
+    })
+  }
+
+  if (!metrics || metrics.length === 0) {
+    return res.status(400).json({
+      heading: "metric parameter missing from querystring...",
+      message: "?metric=<yourmetrichere>"
+    });
+  }
 
   let checkfrom = moment(from, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
   if (!checkfrom.isValid()) {
@@ -28,20 +42,6 @@ stats.get("/", (req, res) => {
       heading: "invalid toDateTime format...",
       message: to
     });
-  }
-
-  if (!metrics || metrics.length === 0) {
-    return res.status(400).json({
-      heading: "metric parameter missing from querystring...",
-      message: "?metric=<yourmetrichere>"
-    });
-  }
-
-  if (!stat || stat.length === 0 ) {
-    return res.status(400).json({
-      heading: "stat parameter missing from querystring...",
-      message: "?stat=<yourstathere>"
-    })
   }
 
   dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');

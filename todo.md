@@ -43,4 +43,5 @@
 
 ##### Fri Oct 27 00:09:24 2017
 - [x] need to return the average from the object, not the expected mathmatical value
-- [_] handle stats
+- [_] handle stats, if there are none etc, and build up the statistics using condition
+- [_] test deliverable, npm shrinkwrap, zip file, npm commands etc.
