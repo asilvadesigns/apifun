@@ -8,11 +8,12 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const stat   = req.query.stat;
-  const metric = req.query.metric;
-  const from   = req.query.fromDateTime;
-  const to     = req.query.toDateTime;
-  let dbquery  = [];
+  const stat    = req.query.stat;
+  const metric  = req.query.metric;
+  const from    = req.query.fromDateTime;
+  const to      = req.query.toDateTime;
+  let dbquery   = [];
+  let statcheck = [];
 
   let checkfrom = moment(from, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
   if (!checkfrom.isValid()) {
@@ -37,48 +38,35 @@ stats.get("/", (req, res) => {
 
   if (Array.isArray(metric)) {
     metric.forEach((item) => {
-      dbquery = store.measurements.filter((measurement) => {
+      statcheck = store.measurements.filter((measurement) => {
         if (measurement.hasOwnProperty(item)) return measurement;
       });
     });
   } else {
-    dbquery = store.measurements.filter((measurement) => {
+    statcheck = store.measurements.filter((measurement) => {
       if (measurement.hasOwnProperty(metric)) return measurement;
     });
   }
 
-  if (!dbquery || dbquery.length === 0) {
+  //  this should be 200
+  if (!statcheck || statcheck.length === 0) {
     return res.status(400).json({
       heading: "invalid metric...",
       message: metric
     })
   }
 
-  let min     = _.minBy(dbquery, metric);
-  let max     = _.maxBy(dbquery, metric);
-  let average = _.meanBy(dbquery, metric);
-
-  min     = min[metric]
-  max     = max[metric]
-  average = Math.round(average * 10) / 10;
-
-  statistics = [
-    {
-      metric: metric,
-      stat: "min",
-      value: min
-    },
-    {
-      metric: metric,
-      stat: "max",
-      value: max
-    },
-    {
-      metric: metric,
-      stat: "average",
-      value: average
-    },
-  ]
+  let statistics = [];
+  if (Array.isArray(metric)) {
+    metric.forEach((item) => {
+      statistics.push({
+        "metric": item,
+        "min": _.minBy(dbquery, item)[item],
+        "max": _.maxBy(dbquery, item)[item],
+        "avg": Math.round(_.meanBy(dbquery, item) * 10) / 10,
+      });
+    });
+  }
 
   res.status(200).json({
     heading: "querystring test...",

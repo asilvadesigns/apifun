@@ -26,7 +26,7 @@ const store = {
     {
       timestamp: "2015-09-01T17:00:00.000Z",
       temperature: 28.1,
-      dewPoint: 18
+      dewPoint: 18.3
     }
   ]
 };
