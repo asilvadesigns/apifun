@@ -8,12 +8,11 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const stat    = req.query.stat;
-  const metric  = req.query.metric;
-  const from    = req.query.fromDateTime;
-  const to      = req.query.toDateTime;
-  let dbquery   = [];
-  let statcheck = [];
+  const from      = req.query.fromDateTime;
+  const to        = req.query.toDateTime;
+  const stat      = req.query.stat;
+  let metrics     = req.query.metric;
+  let dbquery     = [];
 
   let checkfrom = moment(from, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
   if (!checkfrom.isValid()) {
@@ -31,42 +30,63 @@ stats.get("/", (req, res) => {
     });
   }
 
+  if (!metrics || metrics.length === 0) {
+    return res.status(400).json({
+      heading: "metric parameter missing from querystring...",
+      message: "?metric=<yourmetrichere>"
+    });
+  }
+
+  if (!stat || stat.length === 0 ) {
+    return res.status(400).json({
+      heading: "stat parameter missing from querystring...",
+      message: "?stat=<yourstathere>"
+    })
+  }
+
   dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');
   let alpha = _.findIndex(dbquery, { "timestamp": from });
   let omega = _.findIndex(dbquery, { "timestamp": to });
   dbquery   = _.slice(dbquery, alpha, omega);
 
-  if (Array.isArray(metric)) {
-    metric.forEach((item) => {
-      statcheck = store.measurements.filter((measurement) => {
-        if (measurement.hasOwnProperty(item)) return measurement;
-      });
+  if (!Array.isArray(metrics)) metrics = [metrics];
+  let metricscore = new Map();
+  let metricerror = [];
+
+  metrics.forEach((metric) => {
+    store.measurements.forEach((measurement) => {
+      if (measurement.hasOwnProperty(metric)) {
+        metricscore.set(metric, 1);
+      } else {
+        metricscore.set(metric, 0);
+      }
     });
-  } else {
-    statcheck = store.measurements.filter((measurement) => {
-      if (measurement.hasOwnProperty(metric)) return measurement;
-    });
-  }
+  });
+
+  metricscore.forEach((score, key) => {
+    if (score === 0) {
+      metrics.splice(metrics.indexOf(key), 1)
+      metricerror.push(key);
+    }
+  });
 
   //  this should be 200
-  if (!statcheck || statcheck.length === 0) {
+  if (!metrics || metrics.length === 0) {
     return res.status(400).json({
       heading: "invalid metric...",
-      message: metric
+      message: metricerror
     })
   }
 
   let statistics = [];
-  if (Array.isArray(metric)) {
-    metric.forEach((item) => {
-      statistics.push({
-        "metric": item,
-        "min": _.minBy(dbquery, item)[item],
-        "max": _.maxBy(dbquery, item)[item],
-        "avg": Math.round(_.meanBy(dbquery, item) * 10) / 10,
-      });
+  metrics.forEach((metric) => {
+    statistics.push({
+      "metric": metric,
+      "min": _.minBy(dbquery, metric)[metric],
+      "max": _.maxBy(dbquery, metric)[metric],
+      "avg": Math.round(_.meanBy(dbquery, metric) * 10) / 10,
     });
-  }
+  });
 
   res.status(200).json({
     heading: "querystring test...",

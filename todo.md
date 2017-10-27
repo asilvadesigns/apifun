@@ -39,3 +39,7 @@
 - [_] handle stat validation..
 - [x] assume measurements are sorted..? should be...
 - [x] change logic stats logic: start with date range, filter out metrics, generate stats
+- [x] handle "if invalid metric exists among existing, output existing"
+
+##### Fri Oct 27 00:09:24 2017
+- [_] need to return the average from the object, not the expected mathmatical value
