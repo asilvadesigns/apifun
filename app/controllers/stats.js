@@ -44,9 +44,9 @@ stats.get("/", (req, res) => {
     });
   }
 
-  dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');
   let alpha = _.findIndex(dbquery, { "timestamp": from });
   let omega = _.findIndex(dbquery, { "timestamp": to });
+  dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');
   dbquery   = _.slice(dbquery, alpha, omega);
 
   if (!Array.isArray(metrics)) metrics = [metrics];
