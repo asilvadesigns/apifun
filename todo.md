@@ -42,4 +42,5 @@
 - [x] handle "if invalid metric exists among existing, output existing"
 
 ##### Fri Oct 27 00:09:24 2017
-- [_] need to return the average from the object, not the expected mathmatical value
+- [x] need to return the average from the object, not the expected mathmatical value
+- [_] handle stats

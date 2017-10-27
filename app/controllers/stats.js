@@ -78,13 +78,21 @@ stats.get("/", (req, res) => {
     })
   }
 
+  const averageBy = (data, prop) => {
+    let query = []
+    data.forEach((item) => {
+      if (item.hasOwnProperty(prop)) query.push(item[prop]);
+    });
+    return Math.round(_.mean(query) * 10) / 10;
+  }
+
   let statistics = [];
   metrics.forEach((metric) => {
     statistics.push({
       "metric": metric,
       "min": _.minBy(dbquery, metric)[metric],
       "max": _.maxBy(dbquery, metric)[metric],
-      "avg": Math.round(_.meanBy(dbquery, metric) * 10) / 10,
+      "avg": averageBy(dbquery, metric),
     });
   });
 
