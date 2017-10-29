@@ -8,8 +8,8 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const stats     = (!Array.isArray(req.query.stat)) ? [req.query.stat] : Array.from(req.query.stat);
-  const metrics   = (!Array.isArray(req.query.metric)) ? [req.query.metric] : Array.from(req.query.metric);
+  const stats     = (!Array.isArray(req.query.stat)) ? [req.query.stat] : req.query.stat;
+  const metrics   = (!Array.isArray(req.query.metric)) ? [req.query.metric] : req.query.metric;
   const from      = req.query.fromDateTime;
   const to        = req.query.toDateTime;
   let dbquery     = [];
