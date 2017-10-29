@@ -8,17 +8,31 @@ const store = require("../store");
 
 stats.get("/", (req, res) => {
 
-  const stat      = req.query.stat;
-  let metrics     = req.query.metric;
+  const stats     = (!Array.isArray(req.query.stat)) ? [req.query.stat] : Array.from(req.query.stat);
+  const metrics   = (!Array.isArray(req.query.metric)) ? [req.query.metric] : Array.from(req.query.metric);
   const from      = req.query.fromDateTime;
   const to        = req.query.toDateTime;
   let dbquery     = [];
 
-  if (!stat || stat.length === 0 ) {
+  if (!stats || stats.length === 0 ) {
     return res.status(400).json({
       heading: "stat parameter missing from querystring...",
       message: "?stat=<yourstathere>"
-    })
+    });
+  }
+
+  let invalidstats = [];
+  stats.forEach((stat) => {
+    if (!_.includes(["min", "max", "average"], stat)) {
+      invalidstats.push(stat);
+    };
+  });
+
+  if (!_.isEmpty(invalidstats)) {
+    return res.status(400).json({
+      heading: "invalid stat...",
+      message: invalidstats
+    });
   }
 
   if (!metrics || metrics.length === 0) {
@@ -49,7 +63,6 @@ stats.get("/", (req, res) => {
   let omega = _.findIndex(dbquery, { "timestamp": to });
   dbquery   = _.slice(dbquery, alpha, omega);
 
-  if (!Array.isArray(metrics)) metrics = [metrics];
   let metricscore = new Map();
   let metricerror = [];
 
@@ -86,14 +99,28 @@ stats.get("/", (req, res) => {
     return Math.round(_.mean(query) * 10) / 10;
   }
 
+  const statFunction = (stat, metric) => {
+    let value;
+    switch(stat) {
+      case "min":
+        value = _.minBy(dbquery, metric)[metric];
+        break;
+      case "max":
+        value = _.maxBy(dbquery, metric)[metric];
+        break;
+      case "average":
+        value = averageBy(dbquery, metric);
+        break;
+    }
+    return value;
+  }
+
   let statistics = [];
   metrics.forEach((metric) => {
-    statistics.push({
-      "metric": metric,
-      "min": _.minBy(dbquery, metric)[metric],
-      "max": _.maxBy(dbquery, metric)[metric],
-      "avg": averageBy(dbquery, metric),
-    });
+    let testobj = {};
+    testobj["metric"] = metric;
+    stats.forEach((stat) => testobj[stat] = statFunction(stat, metric));
+    statistics.push(testobj);
   });
 
   res.status(200).json({

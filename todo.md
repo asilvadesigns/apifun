@@ -36,12 +36,14 @@
 - [_] refactor code... acting like hoisting isn't a thing..
 - [x] handle datetime validation in stats
 - [x] handle metric validation
-- [_] handle stat validation..
+- [x] handle stat validation..
 - [x] assume measurements are sorted..? should be...
 - [x] change logic stats logic: start with date range, filter out metrics, generate stats
 - [x] handle "if invalid metric exists among existing, output existing"
 
 ##### Fri Oct 27 00:09:24 2017
 - [x] need to return the average from the object, not the expected mathmatical value
-- [_] handle stats, if there are none etc, and build up the statistics using condition
+- [x] handle stats, if there are none etc, and build up the statistics using condition
 - [_] test deliverable, npm shrinkwrap, zip file, npm commands etc.
+
+##### Sat Oct 28 23:33:45 2017
