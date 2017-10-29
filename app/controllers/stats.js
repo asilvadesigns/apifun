@@ -14,7 +14,7 @@ stats.get("/", (req, res) => {
   const to        = req.query.toDateTime;
   let dbquery     = [];
 
-  if (!stats || stats.length === 0 ) {
+  if (stats.length === 1 && stats[0] === undefined) {
     return res.status(400).json({
       heading: "stat parameter missing from querystring...",
       message: "?stat=<yourstathere>"
