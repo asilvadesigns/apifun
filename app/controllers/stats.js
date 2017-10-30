@@ -85,26 +85,10 @@ const _get = (req, res) => {
     })
   }
 
-  const generateStat = (stat, metric) => {
-    let value;
-    switch(stat) {
-      case "min":
-        value = _.minBy(dbquery, metric)[metric];
-        break;
-      case "max":
-        value = _.maxBy(dbquery, metric)[metric];
-        break;
-      case "average":
-        value = UTILS.array.averageBy(dbquery, metric);
-        break;
-    }
-    return value;
-  }
-
   let statistics = [];
   metrics.forEach((metric) => {
     let thisStat  = {["metric"]: metric };
-    stats.forEach((stat) => thisStat[stat] = generateStat(stat, metric));
+    stats.forEach((stat) => thisStat[stat] = UTILS.stats.generateStat(dbquery, stat, metric));
     statistics.push(thisStat);
   });
 
