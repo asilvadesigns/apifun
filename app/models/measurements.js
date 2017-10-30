@@ -1,7 +1,7 @@
 const AJV = require("ajv");
 const ajv = new AJV({ allErrors: true });
 
-const schema = {
+const _schema = {
   "properties": {
     "timestamp": { "type": "string", "format": "date-time" },
     "temperature": { "type": "number" },
@@ -11,12 +11,14 @@ const schema = {
   "required": ["timestamp"]
 }
 
-const isValid = (data) => {
+const _isValid = (data) => {
   return {
-     valid: ajv.validate(schema, data),
+     valid: ajv.validate(_schema, data),
      errors: ajv.errors
   }
 }
 
-module.exports.schema  = schema;
-module.exports.isValid = isValid;
+module.exports = {
+  schema: _schema,
+  isValid: _isValid
+}

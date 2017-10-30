@@ -1,3 +1,5 @@
+const UTILS = require("../utils");
+
 const stats     = require("express").Router();
 const jsonpatch = require("fast-json-patch");
 const moment    = require("moment");
@@ -23,9 +25,7 @@ stats.get("/", (req, res) => {
 
   let invalidstats = [];
   stats.forEach((stat) => {
-    if (!_.includes(["min", "max", "average"], stat)) {
-      invalidstats.push(stat);
-    };
+    if (!_.includes(["min", "max", "average"], stat)) invalidstats.push(stat);
   });
 
   if (!_.isEmpty(invalidstats)) {
@@ -35,23 +35,21 @@ stats.get("/", (req, res) => {
     });
   }
 
-  if (!metrics || metrics.length === 0) {
+  if (metrics.length === 1 && metrics[0] === undefined) {
     return res.status(400).json({
       heading: "metric parameter missing from querystring...",
       message: "?metric=<yourmetrichere>"
     });
   }
 
-  let checkfrom = moment(from, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  if (!checkfrom.isValid()) {
+  if (!UTILS.moment.dateTime(from).isValid()) {
     return res.status(400).json({
       heading: "invalid fromDateTime format...",
       message: from
     });
   }
 
-  let checkto = moment(to, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  if (!checkto.isValid()) {
+  if (!UTILS.moment.dateTime(to).isValid()) {
     return res.status(400).json({
       heading: "invalid toDateTime format...",
       message: to
@@ -91,14 +89,6 @@ stats.get("/", (req, res) => {
     })
   }
 
-  const averageBy = (data, prop) => {
-    let query = []
-    data.forEach((item) => {
-      if (item.hasOwnProperty(prop)) query.push(item[prop]);
-    });
-    return Math.round(_.mean(query) * 10) / 10;
-  }
-
   const statFunction = (stat, metric) => {
     let value;
     switch(stat) {
@@ -109,7 +99,7 @@ stats.get("/", (req, res) => {
         value = _.maxBy(dbquery, metric)[metric];
         break;
       case "average":
-        value = averageBy(dbquery, metric);
+        value = UTILS.array.averageBy(dbquery, metric);
         break;
     }
     return value;

@@ -1,13 +1,16 @@
+const UTILS = require("../utils");
+
 const measurements = require("express").Router();
-const jsonpatch = require("fast-json-patch");
-const moment = require("moment");
+const jsonpatch    = require("fast-json-patch");
+const moment       = require("moment");
+const _            = require("lodash");
 
 const model = require("../models/measurements.js");
 const store = require("../store");
 
 measurements.get("/", (req, res) => {
 
-  if (store.measurements.length === 0) {
+  if (_.isEmpty(store.measurements)) {
     return res.status(404).json({
       heading: "no measurements...",
       message: store.measurements
@@ -20,16 +23,16 @@ measurements.get("/", (req, res) => {
 
 measurements.get("/:timestamp", (req, res) => {
 
-  const date     = moment(req.params.timestamp, 'YYYY-MM-DD', true);
-  const datetime = moment(req.params.timestamp, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
+  const date     = req.params.timestamp;
+  const datetime = req.params.timestamp;
   const request  = req.params.timestamp;
   let query      = [];
 
-  if (datetime.isValid()) {
+  if (UTILS.moment.dateTime(datetime).isValid()) {
     query = store.measurements.filter((measurement) => {
       if (measurement.timestamp === request) return measurement;
     });
-  } else if (date.isValid()) {
+  } else if (UTILS.moment.date(date).isValid()) {
     query = store.measurements.filter((measurement) => {
       if (measurement.timestamp.includes(request)) return measurement;
     });
@@ -40,7 +43,7 @@ measurements.get("/:timestamp", (req, res) => {
     });
   }
 
-  if (!query || query.length === 0) {
+  if (_.isEmpty(query)) {
     return res.status(404).json({
       heading: "timestamp not found...",
       message: request
@@ -56,20 +59,24 @@ measurements.get("/:timestamp", (req, res) => {
 
 measurements.post("/", (req, res) => {
 
-  let valid = model.isValid(req.body);
-  if (!valid.valid) {
+  const timestamp = req.body.timestamp;
+  const schema    = model.isValid(req.body);
+
+  if (!UTILS.moment.dateTime(timestamp).isValid()) {
+    return res.status(400).json({
+      heading: "invalid request timestamp format...",
+      message: timestamp 
+    })
+  }
+
+  if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
-      message: valid.errors
+      message: schema.errors
     });
   }
 
-  let reqexists = false;
-  store.measurements.forEach((measurement) => {
-    if (measurement.timestamp === req.body.timestamp) reqexists = true;
-  });
-
-  if (!reqexists) {
+  if (!_.findKey(store.measurements, ["timestamp", timestamp])) {
     store.measurements.push(req.body);
   } else {
     return res.status(400).json({
@@ -78,7 +85,7 @@ measurements.post("/", (req, res) => {
     });
   }
 
-  res.location("/measurements/" + req.body.timestamp);
+  res.location("/measurements/" + timestamp);
   res.status(201).json({
     heading: "successfully posted...",
     message: req.body
@@ -89,21 +96,20 @@ measurements.post("/", (req, res) => {
 measurements.put("/:timestamp", (req, res) => {
 
   const request = req.params.timestamp;
+  const schema  = model.isValid(req.body);
   let update    = [];
 
-  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  if (!datetime.isValid()) {
+  if (!UTILS.moment.dateTime(request).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
       message: request
     });
   }
 
-  let reqbody = model.isValid(req.body);
-  if (!reqbody.valid) {
+  if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
-      message: reqbody.errors
+      message: schema.errors
     });
   }
 
@@ -114,12 +120,7 @@ measurements.put("/:timestamp", (req, res) => {
     });
   }
 
-  let reqexists = false;
-  store.measurements.forEach((measurement) => {
-    if (measurement.timestamp === request) reqexists = true;
-  });
-
-  if (reqexists) {
+  if (_.findKey(store.measurements, ["timestamp", request])) {
     update = store.measurements.map((measurement) => {
       return (measurement.timestamp === request) ? req.body : measurement;
     });
@@ -142,47 +143,33 @@ measurements.put("/:timestamp", (req, res) => {
 measurements.patch("/:timestamp", (req, res) => {
 
   const request = req.params.timestamp;
+  const schema  = model.isValid(req.body);
   let update    = [];
 
-  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  if (!datetime.isValid()) {
+  if (!UTILS.moment.dateTime(request).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
       message: request
     });
   }
 
-  let reqbody = model.isValid(req.body);
-  if (!reqbody.valid) {
+  if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
-      message: reqbody.errors
+      message: schema.errors
     });
   }
 
-  //TODO: assuming we use json patch, this should never happen.
-  //if (request !== req.body.timestamp) {
-  //  return res.status(409).json({
-  //    heading: "timestamp conflict in request...",
-  //    message: request
-  //  });
-  //}
-
-  let reqexists = false;
-  store.measurements.forEach((measurement) => {
-    if (measurement.timestamp === request) reqexists = true;
-  });
-
   let updateschemaerrors;
-  if (reqexists) {
+  if (_.findKey(store.measurements, ["timestamp", request])) {
     update = store.measurements.map((measurement) => {
       if (measurement.timestamp === request) {
-        let updateditem = jsonpatch.applyPatch(measurement, req.body, true).newDocument;
-        let schemacheck = model.isValid(updateditem);
-        if (!schemacheck.valid) {
-          updateschemaerrors = schemacheck.errors
+        let patcheditem = jsonpatch.applyPatch(measurement, req.body, true).newDocument;
+        let schema = model.isValid(patcheditem);
+        if (!schema.valid) {
+          updateschemaerrors = schema.errors
         } else {
-          return updateditem;
+          return patcheditem;
         }
       } else {
         return measurement;
@@ -217,20 +204,14 @@ measurements.delete("/:timestamp", (req, res) => {
   const request = req.params.timestamp;
   let update    = [];
 
-  let datetime = moment(request, 'YYYY-MM-DDTHH:mm:ss.sssZ', true);
-  if (!datetime.isValid()) {
+  if (!UTILS.moment.dateTime(request).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
       message: request
     });
   }
 
-  let reqexists = false;
-  store.measurements.forEach((measurement) => {
-    if (measurement.timestamp === request) reqexists = true;
-  });
-
-  if (reqexists) {
+  if (_.findKey(store.measurements, ["timestamp", request])) {
     update = store.measurements.filter((measurement) => {
       if (measurement.timestamp !== request) return measurement;
     });
