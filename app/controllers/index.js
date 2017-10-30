@@ -1,13 +1,7 @@
-const ROUTES = require("express").Router();
+const MEASUREMENTS = require("./measurements");
+//const STATS = require("./stats");
 
-const measurements = require("./measurements.js");
-const stats = require("./stats.js");
-
-ROUTES.use('/measurements', measurements);
-ROUTES.use('/stats', stats);
-
-ROUTES.get('/', (req, res) => {
-  res.status(200).json({ message: 'Hello World!' });
-});
-
-module.exports = ROUTES;
+module.exports = {
+  measurements: MEASUREMENTS,
+  //stats: STATS
+};
