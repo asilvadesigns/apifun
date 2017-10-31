@@ -5,7 +5,7 @@ const _     = require("lodash");
 
 //
 //  GET /measurements/
-//  Get all items from the data store
+//  Get all items from data store
 const _get = (req, res) => {
 
   //  data store must not be empty
@@ -22,7 +22,7 @@ const _get = (req, res) => {
 
 //
 //  GET /measurements/:timestamp
-//  Get an item from the data store by timestamp
+//  Get an item from data store by timestamp
 const _getTimestamp = (req, res) => {
 
   const timestamp  = req.params.timestamp;
@@ -56,7 +56,7 @@ const _getTimestamp = (req, res) => {
 
 //  
 //  POST /measurements/
-//  Add a new item to the data store.
+//  Add a new item to data store.
 const _post = (req, res) => {
 
   const timestamp = req.body.timestamp;
@@ -98,7 +98,7 @@ const _post = (req, res) => {
 
 //  
 //  PUT /measurements/
-//  Put a new item to the data store.
+//  Put a new item to data store.
 const _putTimestamp = (req, res) => {
 
   const timestamp = req.params.timestamp;
@@ -150,7 +150,7 @@ const _putTimestamp = (req, res) => {
 
 //
 //  PATCH /measurements/:timestamp
-//  Patch an item from the data store by timestamp
+//  Patch an item from data store by timestamp
 const _patchTimestamp = (req, res) => {
 
   const timestamp = req.params.timestamp;
