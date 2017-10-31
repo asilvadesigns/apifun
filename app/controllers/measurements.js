@@ -3,8 +3,12 @@ const STORE = require("../store");
 const UTILS = require("../utils");
 const _     = require("lodash");
 
+//
+//  GET /measurements/
+//  Get all items from the data store
 const _get = (req, res) => {
 
+  //  data store must not be empty
   if (_.isEmpty(STORE.measurements)) {
    return res.status(404).json({
       heading: "no measurements...",
@@ -16,11 +20,15 @@ const _get = (req, res) => {
 
 };
 
+//
+//  GET /measurements/:timestamp
+//  Get an item from the data store by timestamp
 const _getTimestamp = (req, res) => {
 
   const timestamp  = req.params.timestamp;
   let query        = [];
 
+  //  GET request timestamp must be valid date or datetime, if so build 'query'.
   if (UTILS.moment.dateTime(timestamp).isValid()) {
     query = _.filter(STORE.measurements, obj => obj.timestamp === timestamp);
   } else if (UTILS.moment.date(timestamp).isValid()) {
@@ -32,6 +40,7 @@ const _getTimestamp = (req, res) => {
     });
   }
 
+  //  GET data store query must not be empty
   if (_.isEmpty(query)) {
     return res.status(404).json({
       heading: "timestamp not found...",
@@ -45,14 +54,15 @@ const _getTimestamp = (req, res) => {
   });
 };
 
+//  
+//  POST /measurements/
+//  Add a new item to the data store.
 const _post = (req, res) => {
 
   const timestamp = req.body.timestamp;
   const schema    = MODEL.measurements.isValid(req.body);
 
-  //  TODO: check for case sensitivity in postrequest...
-  //  or find out how to use ajv case sensitive validation
-
+  //  POST request timestamp must be valid datetime
   if (!UTILS.moment.dateTime(timestamp).isValid()) {
     return res.status(400).json({
       heading: "invalid request timestamp format...",
@@ -60,6 +70,7 @@ const _post = (req, res) => {
     })
   }
 
+  //  POST request must have valid schema
   if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
@@ -67,6 +78,7 @@ const _post = (req, res) => {
     });
   }
 
+  //  POST request must not exist in data store, if so add to data store
   if (!_.findKey(STORE.measurements, ["timestamp", timestamp])) {
     STORE.measurements.push(req.body);
   } else {
@@ -84,12 +96,16 @@ const _post = (req, res) => {
 
 }
 
+//  
+//  PUT /measurements/
+//  Put a new item to the data store.
 const _putTimestamp = (req, res) => {
 
   const timestamp = req.params.timestamp;
   const schema    = MODEL.measurements.isValid(req.body);
   let update      = [];
 
+  //  PUT request timestamp must be valid datetime
   if (!UTILS.moment.dateTime(timestamp).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
@@ -97,6 +113,7 @@ const _putTimestamp = (req, res) => {
     });
   }
 
+  //  PUT request must have valid schema
   if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
@@ -104,6 +121,7 @@ const _putTimestamp = (req, res) => {
     });
   }
 
+  //  PUT request body and param timestamp must be identical
   if (timestamp !== req.body.timestamp) {
     return res.status(409).json({
       heading: "timestamp conflict in request...",
@@ -111,6 +129,7 @@ const _putTimestamp = (req, res) => {
     });
   }
 
+  //  PUT request must exist in data store, if so build 'update'
   if (_.find(STORE.measurements, ["timestamp", timestamp])) {
     update = _.map(STORE.measurements, obj => obj.timestamp === timestamp ? req.body : obj);
   } else {
@@ -122,20 +141,23 @@ const _putTimestamp = (req, res) => {
 
   STORE.measurements = update;
 
-  //  TODO: this should be 204
-  res.status(200).json({
+  res.status(204).json({
     heading: "successfully updated...",
     message: STORE.measurements
   });
 
 }
 
+//
+//  PATCH /measurements/:timestamp
+//  Patch an item from the data store by timestamp
 const _patchTimestamp = (req, res) => {
 
   const timestamp = req.params.timestamp;
   const schema    = MODEL.measurements.isValid(req.body);
   let update      = [];
 
+  //  PATCH request timestamp must be valid datetime
   if (!UTILS.moment.dateTime(timestamp).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
@@ -143,6 +165,7 @@ const _patchTimestamp = (req, res) => {
     });
   }
 
+  //  PATCH request must have valid schema
   if (!schema.valid) {
     return res.status(400).json({
       heading: "invalid body schema...",
@@ -150,6 +173,7 @@ const _patchTimestamp = (req, res) => {
     });
   }
 
+  //  PATCH request must exist in data store, if so build and validate 'update'
   let errors;
   if (_.find(STORE.measurements, ["timestamp", timestamp])) {
     [errors, update] = UTILS.measurements.generatePatch(req, timestamp);
@@ -169,19 +193,22 @@ const _patchTimestamp = (req, res) => {
 
   STORE.measurements = update;
 
-  //  TODO: this should be 204
-  res.status(200).json({
+  res.status(204).json({
     heading: "successfully updated...",
     message: STORE.measurements
   });
 
 }
 
+//
+//  DELETE /measurements/:timestamp
+//  Delete an item from the data store by timestamp
 const _deleteTimestamp = (req, res) => {
 
   const request = req.params.timestamp;
   let update    = [];
 
+  //  DELETE request timestamp must be valid datetime
   if (!UTILS.moment.dateTime(request).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
@@ -189,6 +216,7 @@ const _deleteTimestamp = (req, res) => {
     });
   }
 
+  //  DELETE request must exist in data store, if so build 'update'
   if (_.find(STORE.measurements, ["timestamp", request])) {
     update = _.filter(STORE.measurements, obj => obj.timestamp !== request ? obj : null);
   } else {
@@ -200,8 +228,7 @@ const _deleteTimestamp = (req, res) => {
 
   STORE.measurements = update;
 
-  //  TODO: this should be 204
-  res.status(200).json({
+  res.status(204).json({
     heading: "successfully deleted...",
     message: STORE.measurements
   });
