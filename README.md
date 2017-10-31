@@ -11,7 +11,7 @@ npm     3.10.10
 ```
 
 ##### Build
-1. Be sure to `nvm use` to set correct NodeJS version.
+1. `nvm use` to set correct NodeJS version.
 2. `npm install` to download dependencies. 
 
 
