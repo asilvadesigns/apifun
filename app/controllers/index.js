@@ -1,7 +1,7 @@
-const MEASUREMENTS = require("./measurements");
-const STATS        = require("./stats");
+const _measurements = require("./measurements");
+const _stats        = require("./stats");
 
 module.exports = {
-  measurements: MEASUREMENTS,
-  stats: STATS
+  measurements: _measurements,
+  stats: _stats
 };

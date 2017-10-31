@@ -1,7 +1,6 @@
 const UTILS      = require("../utils");
 const _          = require("lodash");
 const jsonpatch  = require("fast-json-patch");
-const model      = require("../models/measurements.js");
 const store      = require("../store");
 
 const _get = (req, res) => {
@@ -19,15 +18,11 @@ const _get = (req, res) => {
     });
   }
 
-  let invalidstats = [];
-  stats.forEach((stat) => {
-    if (!_.includes(["min", "max", "average"], stat)) invalidstats.push(stat);
-  });
-
-  if (!_.isEmpty(invalidstats)) {
+  let statErrors = UTILS.stats.validateStats(stats);
+  if (!_.isEmpty(statErrors)) {
     return res.status(400).json({
       heading: "invalid stat...",
-      message: invalidstats
+      message: statErrors 
     });
   }
 
@@ -57,41 +52,15 @@ const _get = (req, res) => {
   let omega = _.findIndex(dbquery, { "timestamp": to });
   dbquery   = _.slice(dbquery, alpha, omega);
 
-  let metricscore = new Map();
-  let metricerror = [];
-
-  metrics.forEach((metric) => {
-    store.measurements.forEach((measurement) => {
-      if (measurement.hasOwnProperty(metric)) {
-        metricscore.set(metric, 1);
-      } else {
-        metricscore.set(metric, 0);
-      }
-    });
-  });
-
-  metricscore.forEach((score, key) => {
-    if (score === 0) {
-      metrics.splice(metrics.indexOf(key), 1)
-      metricerror.push(key);
-    }
-  });
-
-  //  TODO: this should be 200
-  if (!metrics || metrics.length === 0) {
-    return res.status(400).json({
+  let [validmetrics, invalidmetrics] = UTILS.stats.validateMetrics(dbquery, metrics);
+  if (_.isEmpty(validmetrics)) {
+    return res.status(400).json({     // should be 200
       heading: "invalid metric...",
-      message: metricerror
+      message: invalidmetrics
     })
   }
 
-  let statistics = [];
-  metrics.forEach((metric) => {
-    let thisStat  = {["metric"]: metric };
-    stats.forEach((stat) => thisStat[stat] = UTILS.stats.generateStat(dbquery, stat, metric));
-    statistics.push(thisStat);
-  });
-
+  let statistics = UTILS.stats.generateStats(dbquery, validmetrics, stats);
   res.status(200).json({
     heading: "querystring test...",
     message: {
