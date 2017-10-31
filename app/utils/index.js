@@ -1,13 +1,13 @@
-const MESSAGE = require("./message");
-const MEASUREMENTS = require("./measurements");
-const MOMENT = require("./moment");
-const ARRAY = require("./array");
-const STATS = require("./stats");
+const _message = require("./message");
+const _measurements = require("./measurements");
+const _moment = require("./moment");
+const _array = require("./array");
+const _stats = require("./stats");
 
 module.exports = {
-  array: ARRAY,
-  generalMessage: MESSAGE.generalMessage,
-  measurements: MEASUREMENTS,
-  moment: MOMENT,
-  stats: STATS
+  array: _array,
+  generalMessage: _message.generalMessage,
+  measurements: _measurements,
+  moment: _moment,
+  stats: _stats
 }
