@@ -1,4 +1,4 @@
-const store = {
+const _store = {
   measurements: [
     {
       timestamp: "2015-09-01T16:00:00.000Z",
@@ -30,5 +30,6 @@ const store = {
     }
   ]
 };
-
-module.exports = store;
+module.exports = {
+  store: _store
+};

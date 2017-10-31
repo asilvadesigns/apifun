@@ -1,7 +1,7 @@
+const STORE      = require("../store");
 const UTILS      = require("../utils");
 const _          = require("lodash");
 const jsonpatch  = require("fast-json-patch");
-const store      = require("../store");
 
 const _get = (req, res) => {
 
@@ -47,7 +47,7 @@ const _get = (req, res) => {
     });
   }
 
-  dbquery   = _.sortBy(store.measurements, "timestamp", 'asc');
+  dbquery   = _.sortBy(STORE.measurements, "timestamp", 'asc');
   let alpha = _.findIndex(dbquery, { "timestamp": from });
   let omega = _.findIndex(dbquery, { "timestamp": to });
   dbquery   = _.slice(dbquery, alpha, omega);
@@ -57,7 +57,7 @@ const _get = (req, res) => {
     return res.status(400).json({     // should be 200
       heading: "invalid metric...",
       message: invalidmetrics
-    })
+    });
   }
 
   let statistics = UTILS.stats.generateStats(dbquery, validmetrics, stats);

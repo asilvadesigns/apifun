@@ -5,8 +5,8 @@ const app = require("express")();
 const bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
-app.use('/', ROUTES);
+app.use("/", ROUTES);
 
-app.listen(CONFIG.PORT, () => {
-  console.log("Server listenting on port " + CONFIG.PORT + " ...");
+app.listen(CONFIG.port, CONFIG.host, () => {
+  console.log("Server listenting on port " + CONFIG.port + " ...");
 });

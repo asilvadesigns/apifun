@@ -28,7 +28,7 @@ const _generateStatistics = (db, metrics, stats) => {
 
   metrics.forEach((metric) => {
 
-    let thisStat  = {
+    let thisStat = {
       ["metric"]: metric
     };
 

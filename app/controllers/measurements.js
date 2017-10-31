@@ -1,35 +1,35 @@
+const MODEL      = require("../models");
+const STORE      = require("../store");
 const UTILS      = require("../utils");
 const _          = require("lodash");
 const jsonpatch  = require("fast-json-patch");
-const model      = require("../models/measurements.js");
-const store      = require("../store");
 
 const _get = (req, res) => {
 
-  if (_.isEmpty(store.measurements)) {
-    return res.status(404).json({
+  if (_.isEmpty(STORE.measurements)) {
+   return res.status(404).json({
       heading: "no measurements...",
-      message: store.measurements
+      message: STORE.measurements
     });
   }
 
-  res.status(200).json(store.measurements);
+  res.status(200).json(STORE.measurements);
 
 };
 
 const _getTimestamp = (req, res) => {
 
   const date     = req.params.timestamp;
-  const datetime = req.params.timestamp;
+  const datetime = req.params.timestamp
   const request  = req.params.timestamp;
   let query      = [];
 
   if (UTILS.moment.dateTime(datetime).isValid()) {
-    query = store.measurements.filter(measurement => {
+    query = STORE.measurements.filter(measurement => {
       if (measurement.timestamp === request) return measurement;
     });
   } else if (UTILS.moment.date(date).isValid()) {
-    query = store.measurements.filter(measurement => {
+    query = STORE.measurements.filter(measurement => {
       if (measurement.timestamp.includes(request)) return measurement;
     });
   } else {
@@ -55,7 +55,7 @@ const _getTimestamp = (req, res) => {
 const _post = (req, res) => {
 
   const timestamp = req.body.timestamp;
-  const schema    = model.isValid(req.body);
+  const schema    = MODEL.measurements.isValid(req.body);
 
   //  TODO: check for case sensitivity in postrequest...
   //  or find out how to use ajv case sensitive validation
@@ -74,8 +74,8 @@ const _post = (req, res) => {
     });
   }
 
-  if (!_.findKey(store.measurements, ["timestamp", timestamp])) {
-    store.measurements.push(req.body);
+  if (!_.findKey(STORE.measurements, ["timestamp", timestamp])) {
+    STORE.measurements.push(req.body);
   } else {
     return res.status(400).json({
       heading: "timestamp already exists...",
@@ -94,7 +94,7 @@ const _post = (req, res) => {
 const _putTimestamp = (req, res) => {
 
   const request = req.params.timestamp;
-  const schema  = model.isValid(req.body);
+  const schema  = MODEL.measurements.isValid(req.body);
   let update    = [];
 
   if (!UTILS.moment.dateTime(request).isValid()) {
@@ -118,8 +118,8 @@ const _putTimestamp = (req, res) => {
     });
   }
 
-  if (_.findKey(store.measurements, ["timestamp", request])) {
-    update = store.measurements.map((measurement) => {
+  if (_.findKey(STORE.measurements, ["timestamp", request])) {
+    update = STORE.measurements.map((measurement) => {
       return (measurement.timestamp === request) ? req.body : measurement;
     });
   } else {
@@ -129,19 +129,19 @@ const _putTimestamp = (req, res) => {
     });
   }
 
-  store.measurements = update;
+  STORE.measurements = update;
 
   //  TODO: this should be 204
   res.status(200).json({
     heading: "successfully updated...",
-    message: store.measurements
+    message: STORE.measurements
   });
 
 }
 
 const _patchTimestamp = (req, res) => {
   const request = req.params.timestamp;
-  const schema  = model.isValid(req.body);
+  const schema  = MODEL.measurements.isValid(req.body);
   let update    = [];
 
   if (!UTILS.moment.dateTime(request).isValid()) {
@@ -159,11 +159,11 @@ const _patchTimestamp = (req, res) => {
   }
 
   let updateschemaerrors;
-  if (_.findKey(store.measurements, ["timestamp", request])) {
-    update = store.measurements.map((measurement) => {
+  if (_.findKey(STORE.measurements, ["timestamp", request])) {
+    update = STORE.measurements.map((measurement) => {
       if (measurement.timestamp === request) {
         let patcheditem = jsonpatch.applyPatch(measurement, req.body, true).newDocument;
-        let schema = model.isValid(patcheditem);
+        let schema = MODEL.measurements.isValid(patcheditem);
         if (!schema.valid) {
           updateschemaerrors = schema.errors
         } else {
@@ -187,12 +187,12 @@ const _patchTimestamp = (req, res) => {
     });
   }
 
-  store.measurements = update;
+  STORE.measurements = update;
 
   //  TODO: this should be 204
   res.status(200).json({
     heading: "successfully updated...",
-    message: store.measurements
+    message: STORE.measurements
   });
 
 }
@@ -209,8 +209,8 @@ const _deleteTimestamp = (req, res) => {
     });
   }
 
-  if (_.findKey(store.measurements, ["timestamp", request])) {
-    update = store.measurements.filter((measurement) => {
+  if (_.findKey(STORE.measurements, ["timestamp", request])) {
+    update = STORE.measurements.filter((measurement) => {
       if (measurement.timestamp !== request) return measurement;
     });
   } else {
@@ -220,12 +220,12 @@ const _deleteTimestamp = (req, res) => {
     });
   }
 
-  store.measurements = update;
+  STORE.measurements = update;
 
   //  TODO: this should be 204
   res.status(200).json({
     heading: "successfully deleted...",
-    message: store.measurements
+    message: STORE.measurements
   });
 
 }
