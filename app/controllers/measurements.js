@@ -1,8 +1,7 @@
-const MODEL      = require("../models");
-const STORE      = require("../store");
-const UTILS      = require("../utils");
-const _          = require("lodash");
-const jsonpatch  = require("fast-json-patch");
+const MODEL = require("../models");
+const STORE = require("../store");
+const UTILS = require("../utils");
+const _     = require("lodash");
 
 const _get = (req, res) => {
 
@@ -132,14 +131,15 @@ const _putTimestamp = (req, res) => {
 }
 
 const _patchTimestamp = (req, res) => {
-  const request = req.params.timestamp;
-  const schema  = MODEL.measurements.isValid(req.body);
-  let update    = [];
 
-  if (!UTILS.moment.dateTime(request).isValid()) {
+  const timestamp = req.params.timestamp;
+  const schema    = MODEL.measurements.isValid(req.body);
+  let update      = [];
+
+  if (!UTILS.moment.dateTime(timestamp).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
-      message: request
+      message: timestamp
     });
   }
 
@@ -150,32 +150,20 @@ const _patchTimestamp = (req, res) => {
     });
   }
 
-  let updateschemaerrors;
-  if (_.findKey(STORE.measurements, ["timestamp", request])) {
-    update = STORE.measurements.map((measurement) => {
-      if (measurement.timestamp === request) {
-        let patcheditem = jsonpatch.applyPatch(measurement, req.body, true).newDocument;
-        let schema = MODEL.measurements.isValid(patcheditem);
-        if (!schema.valid) {
-          updateschemaerrors = schema.errors
-        } else {
-          return patcheditem;
-        }
-      } else {
-        return measurement;
-      }
-    });
+  let errors;
+  if (_.findKey(STORE.measurements, ["timestamp", timestamp])) {
+    [errors, update] = UTILS.measurements.generatePatch(req, timestamp);
   } else {
     return res.status(404).json({
       heading: "timestamp not found...",
-      message: request
+      message: timestamp
     });
   }
 
-  if (updateschemaerrors) {
+  if (errors) {
     return res.status(400).json({
       heading: "invalid body schema...",
-      message: updateschemaerrors
+      message: errors
     });
   }
 
