@@ -19,30 +19,24 @@ const _get = (req, res) => {
 
 const _getTimestamp = (req, res) => {
 
-  const date     = req.params.timestamp;
-  const datetime = req.params.timestamp
-  const request  = req.params.timestamp;
-  let query      = [];
+  const timestamp  = req.params.timestamp;
+  let query        = [];
 
-  if (UTILS.moment.dateTime(datetime).isValid()) {
-    query = STORE.measurements.filter(measurement => {
-      if (measurement.timestamp === request) return measurement;
-    });
-  } else if (UTILS.moment.date(date).isValid()) {
-    query = STORE.measurements.filter(measurement => {
-      if (measurement.timestamp.includes(request)) return measurement;
-    });
+  if (UTILS.moment.dateTime(timestamp).isValid()) {
+    query = _.filter(STORE.measurements, obj => obj.timestamp === timestamp);
+  } else if (UTILS.moment.date(timestamp).isValid()) {
+    query = _.filter(STORE.measurements, obj => obj.timestamp.includes(timestamp));
   } else {
     return res.status(400).json({
       heading: "invalid date or datetime request...",
-      message: request
+      message: timestamp
     });
   }
 
   if (_.isEmpty(query)) {
     return res.status(404).json({
       heading: "timestamp not found...",
-      message: request
+      message: timestamp
     });
   }
 
@@ -79,7 +73,7 @@ const _post = (req, res) => {
   } else {
     return res.status(400).json({
       heading: "timestamp already exists...",
-      message: req.body
+      message: timestamp
     });
   }
 
@@ -93,14 +87,14 @@ const _post = (req, res) => {
 
 const _putTimestamp = (req, res) => {
 
-  const request = req.params.timestamp;
-  const schema  = MODEL.measurements.isValid(req.body);
-  let update    = [];
+  const timestamp = req.params.timestamp;
+  const schema    = MODEL.measurements.isValid(req.body);
+  let update      = [];
 
-  if (!UTILS.moment.dateTime(request).isValid()) {
+  if (!UTILS.moment.dateTime(timestamp).isValid()) {
     return res.status(400).json({
       heading: "invalid timestamp...",
-      message: request
+      message: timestamp
     });
   }
 
@@ -111,21 +105,19 @@ const _putTimestamp = (req, res) => {
     });
   }
 
-  if (request !== req.body.timestamp) {
+  if (timestamp !== req.body.timestamp) {
     return res.status(409).json({
       heading: "timestamp conflict in request...",
-      message: request
+      message: timestamp
     });
   }
 
-  if (_.findKey(STORE.measurements, ["timestamp", request])) {
-    update = STORE.measurements.map((measurement) => {
-      return (measurement.timestamp === request) ? req.body : measurement;
-    });
+  if (_.find(STORE.measurements, ["timestamp", timestamp])) {
+    update = _.map(STORE.measurements, obj => obj.timestamp === timestamp ? req.body : obj);
   } else {
     return res.status(404).json({
       heading: "timestamp not found...",
-      message: request
+      message: timestamp
     });
   }
 

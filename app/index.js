@@ -1,14 +1,17 @@
 const CONFIG = require("./config");
 const ROUTES = require("./routes");
 
-const app = require("express")();
+const express = require("express");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
 const validator = require("express-validator");
 
+const app = express();
+
 app.use(bodyParser.json());
-app.use(helmet());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(validator());
+app.use(helmet());
 app.use("/", ROUTES);
 
 app.listen(CONFIG.port, CONFIG.host, () => {

@@ -30,6 +30,5 @@ const _store = {
     }
   ]
 };
-module.exports = {
-  store: _store
-};
+
+module.exports = _store;
