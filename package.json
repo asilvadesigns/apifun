@@ -25,6 +25,7 @@
     "express": "^4.16.2",
     "fast-json-patch": "^2.0.6",
     "fs": "0.0.1-security",
+    "helmet": "^3.9.0",
     "lodash": "^4.17.4",
     "moment": "^2.19.1"
   },
