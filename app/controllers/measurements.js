@@ -151,7 +151,7 @@ const _patchTimestamp = (req, res) => {
   }
 
   let errors;
-  if (_.findKey(STORE.measurements, ["timestamp", timestamp])) {
+  if (_.find(STORE.measurements, ["timestamp", timestamp])) {
     [errors, update] = UTILS.measurements.generatePatch(req, timestamp);
   } else {
     return res.status(404).json({
@@ -189,10 +189,8 @@ const _deleteTimestamp = (req, res) => {
     });
   }
 
-  if (_.findKey(STORE.measurements, ["timestamp", request])) {
-    update = STORE.measurements.filter((measurement) => {
-      if (measurement.timestamp !== request) return measurement;
-    });
+  if (_.find(STORE.measurements, ["timestamp", request])) {
+    update = _.filter(STORE.measurements, obj => obj.timestamp !== request ? obj : null);
   } else {
     return res.status(404).json({
       heading: "timestamp not found...",
