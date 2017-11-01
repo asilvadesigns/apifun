@@ -24,15 +24,13 @@ const _generateStat = (db, metric, stat) => {
 //  Builds an array of stat objects, namely statistics.
 const _generateStats = (db, metrics, stats) => {
 
-  let statistics = _.map(metrics, (metric) => {
+  return _.map(metrics, (metric) => {
 
     let thisStat = { ["metric"]: metric }
     stats.forEach((stat) => thisStat[stat] = _generateStat(db, metric, stat));
 
     return thisStat;
   });
-
-  return statistics;
 }
 
 //
