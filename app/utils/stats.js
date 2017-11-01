@@ -2,7 +2,7 @@ const ARRAY = require("./array.js");
 const _     = require("lodash");
 const store = require("../store");
 
-const _generateStat = (db, stat, metric) => {
+const _generateStat = (db, metric, stat) => {
 
   let value;
 
@@ -22,7 +22,7 @@ const _generateStat = (db, stat, metric) => {
 
 }
 
-const _generateStatistics = (db, metrics, stats) => {
+const _generateStats = (db, metrics, stats) => {
 
   let statistics = [];
 
@@ -33,7 +33,7 @@ const _generateStatistics = (db, metrics, stats) => {
     };
 
     stats.forEach((stat) => {
-      thisStat[stat] = _generateStat(db, metric, stat)
+      thisStat[stat] = _generateStat(db, metric, stat);
     });
 
     statistics.push(thisStat);
@@ -44,16 +44,8 @@ const _generateStatistics = (db, metrics, stats) => {
 }
 
 const _validateStats = (stats) => {
-
-  let invalidstats = [];
-
-  stats.forEach((stat) => {
-    if (!_.includes(["min", "max", "average"], stat)) {
-      invalidstats.push(stat)
-    };
-  });
-
-  return invalidstats;
+  const options = ["min", "max", "average"];
+  return _.filter(stats, stat => !_.includes(options, stat) ? stat : null);
 }
 
 //
@@ -98,7 +90,7 @@ const _validateMetrics = (db, metrics) => {
 
 module.exports = {
   generateStat: _generateStat,
-  generateStats: _generateStatistics,
+  generateStats: _generateStats,
   validateStats: _validateStats,
   validateMetrics: _validateMetrics
 }
