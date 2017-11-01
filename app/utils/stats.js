@@ -21,7 +21,7 @@ const _generateStat = (db, metric, stat) => {
 
 //
 //  Generate Stats
-//  Builds an array of stat objects, namely statistics.
+//  Returns an array of stat objects, namely statistics.
 const _generateStats = (db, metrics, stats) => {
 
   return _.map(metrics, (metric) => {
