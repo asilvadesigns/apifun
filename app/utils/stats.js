@@ -57,25 +57,25 @@ const _validateStats = (stats) => {
 //  metrics for error reporting.
 const _validateMetrics = (db, metrics) => {
 
-  let metricscore = new Map();
+  let metricscore = {};
   let metricerror = [];
 
   metrics.forEach((metric) => {
     db.forEach((measurement) => {
-      if (measurement.hasOwnProperty(metric)) {
-        metricscore.set(metric, 1);
+      if (measurement[metric]) {
+        metricscore[metric] === undefined ? metricscore[metric] = 1 : metricscore[metric]++;
       } else {
-        metricscore.set(metric, 0);
+        metricscore[metric] === undefined ? metricscore[metric] = 0 : metricscore[metric]--;
       }
     });
   });
 
-  metricscore.forEach((score, key) => {
-    if (score === 0) {
-      metrics.splice(metrics.indexOf(key), 1)
-      metricerror.push(key);
+  for (const metric in metricscore) {
+    if (metricscore[metric] < 1) {
+      metrics.splice(metrics.indexOf(metric), 1)
+      metricerror.push(metric);
     }
-  });
+  }
 
   return [metrics, metricerror];
 }
