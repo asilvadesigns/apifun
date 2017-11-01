@@ -2,10 +2,15 @@ const MODEL     = require("../models");
 const STORE     = require("../store");
 const jsonpatch = require("fast-json-patch");
 
+//
+//  Generate Patch
+//  Apply a JSON patch for a given timestamp with a request body.
+//  Then validate the patched object against our schema.
+//  Return any errors and the updated data.
 const _generatePatch = (req, timestamp) => {
 
-  let errors;
   let update = [];
+  let errors;
 
   update = STORE.measurements.map((measurement) => {
 

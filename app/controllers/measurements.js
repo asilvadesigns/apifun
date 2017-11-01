@@ -156,6 +156,7 @@ const _patchTimestamp = (req, res) => {
   const timestamp = req.params.timestamp;
   const schema    = MODEL.measurements.isValid(req.body);
   let update      = [];
+  let errors;
 
   //  PATCH request timestamp must be valid datetime
   if (!UTILS.moment.dateTime(timestamp).isValid()) {
@@ -174,7 +175,6 @@ const _patchTimestamp = (req, res) => {
   }
 
   //  PATCH request must exist in data store, if so build and validate 'update'
-  let errors;
   if (_.find(STORE.measurements, ["timestamp", timestamp])) {
     [errors, update] = UTILS.measurements.generatePatch(req, timestamp);
   } else {
