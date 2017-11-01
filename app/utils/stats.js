@@ -49,7 +49,7 @@ const _validateStats = (stats) => {
 //  which is valid. Returns a new list of valid metrics and invalid.
 //
 //  In order to determine which metrics are valid, we perform a 
-//  linear search through the store and compare against each metric
+//  linear search through the db and compare against each metric
 //  within the request. Valid metrics are assigned '1', invalid '0'.
 //
 //  Then we remove all invalid metrics from the metrics list. This 
