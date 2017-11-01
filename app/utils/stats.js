@@ -1,6 +1,5 @@
 const ARRAY = require("./array.js");
 const _     = require("lodash");
-const store = require("../store");
 
 //
 //  Generate Stat
