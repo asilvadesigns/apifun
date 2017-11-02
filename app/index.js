@@ -15,3 +15,5 @@ app.use("/", ROUTES);
 app.listen(CONFIG.port, CONFIG.host, () => {
   console.log(`Server listenting at ${CONFIG.host}:${CONFIG.port}`);
 });
+
+module.exports = app;
