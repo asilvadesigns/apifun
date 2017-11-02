@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app/index.js",
     "prepare": "echo \"okay... you're all set.\"",
-    "test": "mocha"
+    "test": "mocha --recursive ./app/tests"
   },
   "repository": {
     "type": "git",
