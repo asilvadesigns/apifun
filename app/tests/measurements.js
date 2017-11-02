@@ -179,3 +179,111 @@ describe("Feature: Get a measurement", () => {
   });
 
 });
+
+describe("Feature: Update a measurement", () => {
+
+  beforeEach(done => {
+    STORE.measurements = [
+      {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 0
+      },
+      {
+        "timestamp": "2015-09-01T16:10:00.000Z",
+        "temperature": 27.3,
+        "dewPoint": 16.9,
+        "percipitation": 0
+      },
+    ];
+    done();
+  });
+
+  //
+  //  PUT /measurements/
+  describe("PUT /measurements", () => {
+    it("Replace a measurement with valid (numeric) values", done => {
+      let measurement = {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 15.2 
+      }
+      chai
+        .request(APP)
+        .put("/measurements/" + measurement.timestamp)
+        .send(measurement)
+        .end((err, res) => {
+          res.should.have.status(204);
+          done();
+        });
+    });
+  });
+
+  //
+  //  PUT /measurements/
+  describe("PUT /measurements", () => {
+    it("Replace a measurement with invalid values", done => {
+      let measurement = {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": "not a number",
+        "dewPoint": 16.7,
+        "percipitation": 0
+      }
+      chai
+        .request(APP)
+        .put(`/measurements/${measurement.timestamp}`)
+        .send(measurement)
+        .end((err, res) => {
+          res.should.have.status(400);
+          done();
+        });
+    });
+  });
+
+  //
+  //  PUT /measurements/
+  describe("PUT /measurements", () => {
+    it("Replace a measurement with mismatched timestamps", done => {
+      let conflictid = "2015-09-01T16:00:00.000Z";
+      let measurement = {
+        "timestamp": "2015-09-02T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 0
+      }
+      chai
+        .request(APP)
+        .put(`/measurements/${conflictid}`)
+        .send(measurement)
+        .end((err, res) => {
+          res.should.have.status(409);
+          done();
+        });
+    });
+  });
+
+  //
+  //  PUT /measurements/
+  describe("PUT /measurements", () => {
+    it("Replace a measurement that does not exist", done => {
+      let nonexistant = "2015-09-02T16:00:00.000Z";
+      let measurement = {
+        "timestamp": "2015-09-02T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 0
+      }
+      chai
+        .request(APP)
+        .put(`/measurements/${nonexistant}`)
+        .send(measurement)
+        .end((err, res) => {
+          res.should.have.status(404);
+          done();
+        });
+    });
+  });
+
+});
