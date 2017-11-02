@@ -26,11 +26,10 @@ describe("Books", () => {
     it("it should GET all the measurements", done => {
       chai
         .request(APP)
-        .get("/measurement")
+        .get("/measurements")
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("array");
-          res.body.length.should.be.eql(0);
           done();
         });
     });
