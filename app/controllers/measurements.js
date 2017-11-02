@@ -48,10 +48,15 @@ const _getTimestamp = (req, res) => {
     });
   }
 
-  res.status(200).json({
-    heading: "measurement found!",
-    message: query
-  });
+  if (query.length === 1) {
+    return res.status(200).json(query[0]);
+  } 
+  
+  res.status(200).json(query);
+  // res.status(200).json({
+  //   heading: "measurement found!",
+  //   message: query
+  // });
 };
 
 //  

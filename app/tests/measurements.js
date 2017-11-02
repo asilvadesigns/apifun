@@ -122,7 +122,7 @@ describe("Feature: Get a measurement", () => {
 
   //
   //  GET /measurements/
-  describe("/GET /measurements/2015-09-01T16:20:00.000Z", () => {
+  describe("GET /measurements/2015-09-01T16:20:00.000Z", () => {
     it("Get a specific measurement", done => {
       chai
         .request(APP)
@@ -134,4 +134,48 @@ describe("Feature: Get a measurement", () => {
         });
     });
   });
+
+  //
+  //  GET /measurements/
+  describe("GET /measurements/2015-09-01T16:50:00.000Z", () => {
+    it("Get a measurement that does not exist", done => {
+      chai
+        .request(APP)
+        .get("/measurements/2015-09-01T16:50:00.000Z")
+        .end((err, res) => {
+          res.should.have.status(404);
+          done();
+        });
+    });
+  });
+
+  //
+  //  GET /measurements/
+  describe("GET /measurements/2015-09-01", () => {
+    it("Get measurements from a day", done => {
+      chai
+        .request(APP)
+        .get("/measurements/2015-09-01")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          done();
+        });
+    });
+  });
+
+  //
+  //  GET /measurements/
+  describe("GET /measurements/2015-09-03", () => {
+    it("Get measurement from a day where no measurements were taken.", done => {
+      chai
+        .request(APP)
+        .get("/measurements/2015-09-03")
+        .end((err, res) => {
+          res.should.have.status(404);
+          done();
+        });
+    });
+  });
+
 });
