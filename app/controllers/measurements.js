@@ -78,7 +78,7 @@ const _post = (req, res) => {
     });
   }
 
-  //  POST request must not exist in data store, if so add to data store
+  //  POST request may be added to the data store if it is not already there
   if (!_.findKey(STORE.measurements, ["timestamp", timestamp])) {
     STORE.measurements.push(req.body);
   } else {
