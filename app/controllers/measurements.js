@@ -235,10 +235,11 @@ const _deleteTimestamp = (req, res) => {
 
   STORE.measurements = update;
 
-  res.status(204).json({
-    heading: "successfully deleted...",
-    message: STORE.measurements
-  });
+  res.status(204).end();
+  // res.status(204).json({
+  //   heading: "successfully deleted...",
+  //   message: STORE.measurements
+  // });
 
 }
 

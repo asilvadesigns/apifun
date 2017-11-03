@@ -404,3 +404,55 @@ describe("Feature: Update a measurement(PATCH)", () => {
     });
   });
 });
+
+describe("Feature: Delete a measurement", () => {
+
+  beforeEach(done => {
+    STORE.measurements = [
+      {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 0
+      },
+      {
+        "timestamp": "2015-09-01T16:10:00.000Z",
+        "temperature": 27.3,
+        "dewPoint": 16.9,
+        "percipitation": 0
+      },
+    ];
+    done();
+  });
+
+  //
+  //  DELETE /measurements/
+  describe("DELETE /measurements", () => {
+    it("Delete a specific measurement", done => {
+      let timestamp = "2015-09-01T16:00:00.000Z";
+      chai
+        .request(APP)
+        .delete(`/measurements/${timestamp}`)
+        .end((err, res) => {
+          res.should.have.status(204);
+          done();
+        });
+    });
+  });
+
+  //
+  //  DELETE /measurements/
+  describe("DELETE /measurements", () => {
+    it("Delete a measurement that does not exist", done => {
+      let timestamp = "2015-09-01T16:20:00.000Z";
+      chai
+        .request(APP)
+        .delete(`/measurements/${timestamp}`)
+        .end((err, res) => {
+          res.should.have.status(404);
+          done();
+        });
+    });
+  });
+
+});
