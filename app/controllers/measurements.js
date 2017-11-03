@@ -199,10 +199,11 @@ const _patchTimestamp = (req, res) => {
 
   STORE.measurements = update;
 
-  res.status(204).json({
-    heading: "successfully updated...",
-    message: STORE.measurements
-  });
+  res.status(204).end();
+  // res.status(204).json({
+  //   heading: "successfully updated...",
+  //   message: STORE.measurements
+  // });
 
 }
 

@@ -4,4 +4,4 @@ const _store = {
   measurements: []
 };
 
-module.exports = _store;
+module.exports = _sample;

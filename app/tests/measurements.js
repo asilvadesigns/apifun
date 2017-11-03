@@ -12,6 +12,11 @@ chai.use(chaiHttp);
 
 describe("Feature: Add a measurement", () => {
 
+  beforeEach(done => {
+    STORE.measurements = [];
+    done();
+  });
+
   //
   //  POST /measurements/
   describe("POST /measurements", () => {
@@ -180,7 +185,7 @@ describe("Feature: Get a measurement", () => {
 
 });
 
-describe("Feature: Update a measurement", () => {
+describe("Feature: Update a measurement(PUT)", () => {
 
   beforeEach(done => {
     STORE.measurements = [
@@ -285,5 +290,117 @@ describe("Feature: Update a measurement", () => {
         });
     });
   });
+});
 
+describe("Feature: Update a measurement(PATCH)", () => {
+
+  beforeEach(done => {
+    STORE.measurements = [
+      {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.7,
+        "percipitation": 0
+      },
+      {
+        "timestamp": "2015-09-01T16:10:00.000Z",
+        "temperature": 27.3,
+        "dewPoint": 16.9,
+        "percipitation": 0
+      },
+    ];
+    done();
+  });
+
+  //
+  //  PATCH /measurements/
+  describe("PATCH /measurements", () => {
+    it("Update metrics of a measurement with valid (numeric) values", done => {
+      let timestamp = "2015-09-01T16:00:00.000Z";
+      let operation = [ 
+        {
+          "op": "replace",
+          "path": "/percipitation",
+          "value": 12.3
+        }
+      ];
+      chai
+        .request(APP)
+        .patch(`/measurements/${timestamp}`)
+        .send(operation)
+        .end((err, res) => {
+          res.should.have.status(204);
+          done();
+        });
+    });
+  });
+
+  //
+  //  PATCH /measurements/
+  describe("PATCH /measurements", () => {
+    it("Update metrics of a measurement with invalid values", done => {
+      let timestamp = "2015-09-01T16:00:00.000Z";
+      let operation = [ 
+        {
+          "op": "replace",
+          "path": "/percipitation",
+          "value": "not a number"
+        }
+      ];
+      chai
+        .request(APP)
+        .patch(`/measurements/${timestamp}`)
+        .send(operation)
+        .end((err, res) => {
+          res.should.have.status(400);
+          done();
+        });
+    });
+  });
+
+  //
+  //  PATCH /measurements/
+  // describe("PATCH /measurements", () => {
+  //   it("Update metrics of a measurement with mismatched timestamps", done => {
+  //     let timestamp = "2015-09-01T16:00:00.000Z";
+  //     let operation = [ 
+  //       {
+  //         "op": "replace",
+  //         "path": "/percipitation",
+  //         "value": "not a number"
+  //       }
+  //     ];
+  //     chai
+  //       .request(APP)
+  //       .patch(`/measurements/${timestamp}`)
+  //       .send(operation)
+  //       .end((err, res) => {
+  //         res.should.have.status(400);
+  //         done();
+  //       });
+  //   });
+  // });
+
+  //
+  //  PATCH /measurements/
+  describe("PATCH /measurements", () => {
+    it("Update metrics of a measurement that does not exist", done => {
+      let timestamp = "2015-09-02T16:00:00.000Z";
+      let operation = [ 
+        {
+          "op": "replace",
+          "path": "/percipitation",
+          "value": 12.3
+        }
+      ];
+      chai
+        .request(APP)
+        .patch(`/measurements/${timestamp}`)
+        .send(operation)
+        .end((err, res) => {
+          res.should.have.status(404);
+          done();
+        });
+    });
+  });
 });
