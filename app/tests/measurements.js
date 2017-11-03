@@ -456,3 +456,102 @@ describe("Feature: Delete a measurement", () => {
   });
 
 });
+
+describe("Feature: Get measurement statistics", () => {
+  
+  beforeEach(done => {
+    STORE.measurements = [
+      {
+        "timestamp": "2015-09-01T16:00:00.000Z",
+        "temperature": 27.1,
+        "dewPoint": 16.9
+      },
+      {
+        "timestamp": "2015-09-01T16:10:00.000Z",
+        "temperature": 27.3
+      },
+      {
+        "timestamp": "2015-09-01T16:20:00.000Z",
+        "temperature": 27.5,
+        "dewPoint": 17.1
+      },
+      {
+        "timestamp": "2015-09-01T16:30:00.000Z",
+        "temperature": 27.4,
+        "dewPoint": 17.3
+      },
+      {
+        "timestamp": "2015-09-01T16:40:00.000Z",
+        "temperature": 27.2
+      },
+      {
+        "timestamp": "2015-09-01T17:00:00.000Z",
+        "temperature": 28.1,
+        "dewPoint": 18.3
+      }
+    ];
+    done();
+  });
+
+  //
+  //  GET /stats/
+  describe("GET /stat", () => {
+    it("Replace a measurement with valid (numeric) values", done => {
+      chai
+        .request(APP)
+        .get("/stats?stat=min&stat=max&stat=average&metric=temperature&fromDateTime=2015-09-01T16:00:00.000Z&toDateTime=2015-09-01T17:00:00.000Z")
+        .end((err, res) => {
+          res.should.have.status(200);
+          // res.body.should.have.property("min").eql(27.1);
+          // res.body.should.have.property("max").eql(27.5);
+          // res.body.should.have.property("average").eql(27.3);
+          done();
+        });
+    });
+  });
+
+  //
+  //  GET /stats/
+  describe("GET /stat", () => {
+    it("Get stats for a sparsely reported metric", done => {
+      chai
+        .request(APP)
+        .get("/stats?stat=min&stat=max&stat=average&metric=dewPoint&fromDateTime=2015-09-01T16:00:00.000Z&toDateTime=2015-09-01T17:00:00.000Z")
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
+
+  //
+  //  GET /stats/
+  describe("GET /stat", () => {
+    it("Get stats for a metric that has never been reported", done => {
+      chai
+        .request(APP)
+        .get("/stats?stat=min&stat=max&stat=average&metric=percipitation&fromDateTime=2015-09-01T16:00:00.000Z&toDateTime=2015-09-01T17:00:00.000Z")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a("array");
+          res.body.length.should.be.eql(0);
+          done();
+        });
+    });
+  });
+
+  //
+  //  GET /stats/
+  describe("GET /stat", () => {
+    it("Get stats for more than one metric", done => {
+      chai
+        .request(APP)
+        .get("/stats?stat=min&stat=max&stat=average&metric=percipitation&fromDateTime=2015-09-01T16:00:00.000Z&toDateTime=2015-09-01T17:00:00.000Z")
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
+
+});

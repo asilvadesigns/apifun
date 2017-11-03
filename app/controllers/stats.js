@@ -63,23 +63,27 @@ const _get = (req, res) => {
 
   //  GET metrics must be valid
   let [validmetrics, invalidmetrics] = UTILS.stats.validateMetrics(query, metrics);
+
   if (_.isEmpty(validmetrics)) {
-    return res.status(400).json({     // should be 200
-      heading: "invalid metric...",
-      message: invalidmetrics
-    });
+    return res.status(200).json([]);
+    // return res.status(200).json({
+    //   heading: "invalid metric...",
+    //   message: []
+    // });
   }
 
   //  GET build 'statistics' from 'query', given 'validmetrics' and 'stats'
   let statistics = UTILS.stats.generateStats(query, validmetrics, stats);
-  res.status(200).json({
-    heading: "querystring test...",
-    message: {
-      querystring: req.query,
-      queryresult: query,
-      statistics: statistics
-    }
-  });
+
+  res.status(200).json(statistics);
+  // res.status(200).json({
+  //   heading: "querystring test...",
+  //   message: {
+  //     querystring: req.query,
+  //     queryresult: query,
+  //     statistics: statistics
+  //   }
+  // });
 
 }
 
