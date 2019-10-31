@@ -1,11 +1,3 @@
-# Readme Plz
-This is a private repository containing the solution for `take-home-test-v1.2.md`.
-
-Given the open nature of the test *'...you are free to spend as much time as you like...'* I have reached a point where due to an upcoming interview, thought it best to turn in as is. The requirements are satisfied, and the areas in which I would love to continue improving (architecture, time + space complexity, security, testing, and other optimizations) can be done on my own time.
-
-That being said, I think there is enough evidence to help Capital One Engineers determine my skill level or lack thereof. I greatly enjoyed this test and thankful for the opportunity.
-
-
 ### Dev
 ##### Environment
 ```
