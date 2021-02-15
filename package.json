@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node app/index.js",
     "prepare": "echo \"optims go here... none yet...\"",
-    "test": "mocha --recursive ./app/tests"
+    "test": "mocha --recursive ./app/tests",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -28,12 +30,14 @@
     "fs": "0.0.1-security",
     "helmet": "^3.9.0",
     "lodash": "^4.17.4",
-    "moment": "^2.19.1"
+    "moment": "^2.19.1",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "eslint-config-google": "^0.9.1",
     "mocha": "https://registry.npmjs.org/mocha/-/mocha-4.0.1.tgz"
-  }
+  },
+  "snyk": true
 }
