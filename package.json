@@ -23,7 +23,7 @@
     "ajv": "^5.2.4",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
-    "express-validator": "^4.3.0",
+    "express-validator": "^5.0.0",
     "fast-json-patch": "^2.0.6",
     "fs": "0.0.1-security",
     "helmet": "^3.9.0",
